@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "fUGP28M797tr9+BoLdmzzAAERG9V0H2kKkSysK2R6aSMV68VgTIeetE3JnB5OElJlVM9QGw9oLSqYWUplEc/Kg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\HP2015\\Desktop\\VS 2019\\Library\\Library\\Library.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\HP2015\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.10.9\\microsoft.visualstudio.azure.containers.tools.targets.1.10.9.nupkg.sha512"
+  ],
+  "logs": []
+}
