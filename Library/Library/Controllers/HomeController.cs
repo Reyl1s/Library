@@ -11,27 +11,30 @@ namespace Library.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        LibraryContext db;
+        public HomeController(LibraryContext context)
         {
-            _logger = logger;
+            db = context;
         }
-
         public IActionResult Index()
         {
-            return View();
+            return View(db.Books.ToList());
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult Booking(int? id)
         {
+            if (id == null) return RedirectToAction("Index");
+            ViewBag.BookId = id;
             return View();
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public string Booking(Order order)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            db.Orders.Add(order);
+            // сохраняем в бд все изменения
+            db.SaveChanges();
+            return "Спасибо, " + order.User + ", за бронирование!";
         }
     }
 }
