@@ -5,7 +5,7 @@ namespace Library
 {
     public static class SampleData
     {
-        public static void Initialize(LibraryContext context)
+        public static void Initialize(LibraryDbContext context)
         {
             if (!context.Books.Any())
             {

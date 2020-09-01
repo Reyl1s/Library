@@ -26,7 +26,7 @@ namespace Library
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<LibraryContext>(options => options.UseSqlServer(connection));
+            services.AddDbContextPool<LibraryDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
         }
 

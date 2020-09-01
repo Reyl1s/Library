@@ -11,8 +11,8 @@ namespace Library.Controllers
 {
     public class HomeController : Controller
     {
-        LibraryContext db;
-        public HomeController(LibraryContext context)
+        LibraryDbContext db;
+        public HomeController(LibraryDbContext context)
         {
             db = context;
         }

@@ -23,7 +23,7 @@ namespace Library
 
                 try
                 {
-                    var context = services.GetRequiredService<LibraryContext>();
+                    var context = services.GetRequiredService<LibraryDbContext>();
                     SampleData.Initialize(context);
                 }
                 catch (Exception ex)
