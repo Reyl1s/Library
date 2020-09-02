@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Library.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Controllers
 {
@@ -16,25 +17,20 @@ namespace Library.Controllers
         {
             db = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(db.Books.ToList());
+            return View(await db.Books.ToListAsync());
         }
-
-        [HttpGet]
-        public IActionResult Booking(int? id)
+        public IActionResult CreateBook()
         {
-            if (id == null) return RedirectToAction("Index");
-            ViewBag.BookId = id;
             return View();
         }
         [HttpPost]
-        public string Booking(Order order)
+        public async Task<IActionResult> CreateBook(Book book)
         {
-            db.Orders.Add(order);
-            // сохраняем в бд все изменения
-            db.SaveChanges();
-            return "Спасибо, " + order.User + ", за бронирование!";
+            db.Books.Add(book);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
     }
 }

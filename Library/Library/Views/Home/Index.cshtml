@@ -1,22 +1,13 @@
 ﻿@model IEnumerable<Library.Models.Book>
 @{
-    ViewData["Title"] = "Каталог книг";
+    ViewBag.Title = "Все книги";
 }
-<h3>Книги</h3>
-<table class="table-condensed">
-    <tr>
-        <td>Название</td>
-        <td>Жанр</td>
-        <td>Наличие</td>
-        <td></td>
-    </tr>
-    @foreach (var book in Model)
+<a asp-action="CreateBook">Добавить книгу</a>
+<table class="table">
+    <tr bgcolor="#D3D3D3" align="center"><td><strong>Название</strong></td><td><strong>Жанр</strong></td><td><strong>Автор</strong></td><td><strong>Издательство</strong></td></tr>
+    
+    @foreach (var item in Model)
     {
-        <tr>
-            <td>@book.Name</td>
-            <td>@book.Genre</td>
-            <td>@book.Availability</td>
-            <td><a href="~/Home/Booking/@book.Id">Забронировать</a></td>
-        </tr>
+        <tr align="center"><td>@item.Name</td><td>@item.Genre</td><td>@item.Author</td><td>@item.Publisher</td></tr>
     }
 </table>

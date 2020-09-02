@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Library
     public class LibraryDbContext : DbContext
     {
         public DbSet<Book> Books { get; set; }
+
         public DbSet<Order> Orders { get; set; }
 
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
