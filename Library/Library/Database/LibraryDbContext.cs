@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace Library
 {
-    public class LibraryDbContext : DbContext
+    public class LibraryDbContext : IdentityDbContext<User>
     {
         public DbSet<Book> Books { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<Microsoft.AspNetCore.Identity.IdentityUserClaim<Guid>> IdentityUserClaims { get; set; }
 
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             : base(options)

@@ -12,25 +12,27 @@ namespace Library.Controllers
 {
     public class HomeController : Controller
     {
-        LibraryDbContext db;
-        public HomeController(LibraryDbContext context)
+        private readonly ILogger<HomeController> _logger;
+
+        public HomeController(ILogger<HomeController> logger)
         {
-            db = context;
+            _logger = logger;
         }
-        public async Task<IActionResult> Index()
-        {
-            return View(await db.Books.ToListAsync());
-        }
-        public IActionResult CreateBook()
+
+        public IActionResult Index()
         {
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateBook(Book book)
+
+        public IActionResult Privacy()
         {
-            db.Books.Add(book);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

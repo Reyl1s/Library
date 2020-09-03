@@ -1,13 +1,31 @@
-﻿@model IEnumerable<Library.Models.Book>
-@{
-    ViewBag.Title = "Все книги";
+﻿@{
+    ViewData["Title"] = "Home Page";
 }
-<a asp-action="CreateBook">Добавить книгу</a>
-<table class="table">
-    <tr bgcolor="#D3D3D3" align="center"><td><strong>Название</strong></td><td><strong>Жанр</strong></td><td><strong>Автор</strong></td><td><strong>Издательство</strong></td></tr>
-    
-    @foreach (var item in Model)
-    {
-        <tr align="center"><td>@item.Name</td><td>@item.Genre</td><td>@item.Author</td><td>@item.Publisher</td></tr>
-    }
-</table>
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>@User.Identity.Name</p>
+
+    <form method="post" asp-controller="Account" asp-action="Books">
+        <input type="submit" value="Список книг" />
+    </form>
+
+    <form method="post" asp-controller="Users" asp-action="Index">
+        <input type="submit" value="Список пользователей" />
+    </form>
+
+    <form method="post" asp-controller="Roles" asp-action="Index">
+        <input type="submit" value="Список ролей" />
+    </form>
+
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" value="Выход" />
+    </form>
+
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login">Вход</a>
+    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+}
