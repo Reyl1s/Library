@@ -90,17 +90,5 @@ namespace Library.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-
-        [HttpPost]
-        public IActionResult CreateBook()
-        {
-            return Redirect("/Books/Create");
-        }
-
-        [HttpPost]
-        public IActionResult Books()
-        {
-            return Redirect("/Books");
-        }
     }
 }

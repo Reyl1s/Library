@@ -8,15 +8,40 @@
 </head>
 <body>
     <!--меню-->
-    <nav class="navbar navbar-inverse">
-        <div class="container">
-            <div>
-                <ul class="nav navbar-nav">
-                    <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
-                </ul>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <form method="post" asp-controller="Account" asp-action="Logout">
+                        <input type="submit" value="Выход" />
+                    </form>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    }
+    else
+    {
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
+                    </ul>
+                </div>
+                <a asp-controller="Account" asp-action="Login">Вход</a>
+                <a asp-controller="Account" asp-action="Register">Регистрация</a>
+                <div>
+
+                </div>
+            </div>
+        </nav>
+    }
     <!--основной контент-->
     <div class="container body-content">
         @RenderBody()

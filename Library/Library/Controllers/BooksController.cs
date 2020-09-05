@@ -9,27 +9,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Controllers
 {
-    [Authorize(Roles = "Библиотекарь")]
+    
     public class BooksController : Controller
     {
-        readonly LibraryDbContext db;
+        private readonly LibraryDbContext db;
+
         public BooksController(LibraryDbContext context)
         {
             db = context;
         }
+
         public async Task<IActionResult> Index()
         {
             return View(await db.Books.ToListAsync());
         }
+
         public IActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> Create(Book book)
+        public async Task<IActionResult> CreateBook(Book book)
         {
             db.Books.Add(book);
             await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Delete(int id)
+        {
+            Book b = new Book { Id = id };
+            db.Entry(b).State = EntityState.Deleted;
+            db.SaveChanges();
+
             return RedirectToAction("Index");
         }
     }

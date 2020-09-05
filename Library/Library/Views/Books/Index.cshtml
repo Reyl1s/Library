@@ -2,15 +2,41 @@
 @{
     ViewBag.Title = "Список книг";
 }
-<form method="post" asp-controller="Account" asp-action="CreateBook">
-    <input type="submit" value="Добавить книгу" />
-</form>
-<hr />
+
+<h2><strong>Книги</strong></h2>
+
+@if (this.User.IsInRole("Библиотекарь"))
+{
+    <form method="post" asp-controller="Books" asp-action="Create">
+        <input type="submit" value="Добавить книгу" />
+    </form>
+}
+
 <table class="table">
-    <tr bgcolor="#D3D3D3" align="center"><td><strong>Название</strong></td><td><strong>Жанр</strong></td><td><strong>Автор</strong></td><td><strong>Издательство</strong></td></tr>
+    <tr bgcolor="#D3D3D3" align="center">
+        <td><strong>Название</strong></td>
+        <td><strong>Жанр</strong></td>
+        <td><strong>Автор</strong></td>
+        <td><strong>Издательство</strong></td>
+    </tr>
 
     @foreach (var item in Model)
     {
-        <tr align="center"><td>@item.Name</td><td>@item.Genre</td><td>@item.Author</td><td>@item.Publisher</td></tr>
+        <tr align="center">
+            <td>@item.Name</td>
+            <td>@item.Genre</td>
+            <td>@item.Author</td>
+            <td>@item.Publisher</td>
+            @if (this.User.IsInRole("Библиотекарь"))
+            {
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Удалить
+                        </button>
+                    </form>
+                </td>
+            }
+        </tr>
     }
 </table>

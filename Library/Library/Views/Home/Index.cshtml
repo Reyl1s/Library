@@ -1,16 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Домашняя страница";
 }
 
+<p>Добро пожаловать, @User.Identity.Name</p>
 
-@if (User.Identity.IsAuthenticated)
+<form method="post" asp-controller="Home" asp-action="Books">
+    <input type="submit" value="Список книг" />
+</form>
+
+@if (this.User.IsInRole("Администратор"))
 {
-    <p>@User.Identity.Name</p>
-
-    <form method="post" asp-controller="Account" asp-action="Books">
-        <input type="submit" value="Список книг" />
-    </form>
-
     <form method="post" asp-controller="Users" asp-action="Index">
         <input type="submit" value="Список пользователей" />
     </form>
@@ -18,14 +17,4 @@
     <form method="post" asp-controller="Roles" asp-action="Index">
         <input type="submit" value="Список ролей" />
     </form>
-
-    <form method="post" asp-controller="Account" asp-action="Logout">
-        <input type="submit" value="Выход" />
-    </form>
-
-}
-else
-{
-    <a asp-controller="Account" asp-action="Login">Вход</a>
-    <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
