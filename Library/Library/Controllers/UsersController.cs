@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Library.Database.Entities;
 using Library.Models;
-using Library.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ namespace Library.Controllers
     [Authorize(Roles = "Администратор")]
     public class UsersController : Controller
     {
-        UserManager<User> _userManager;
+        readonly UserManager<User> _userManager;
 
         public UsersController(UserManager<User> userManager)
         {

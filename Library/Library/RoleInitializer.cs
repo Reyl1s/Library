@@ -1,4 +1,4 @@
-﻿using Library.Models;
+﻿using Library.Database.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,15 +11,18 @@ namespace Library
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string adminEmail = "admin@gmail.com";
-            string password = "password";
-            if (await roleManager.FindByNameAsync("Администратор") == null)
+            var adminEmail = "admin@gmail.com";
+            var password = "password";
+            var adminName = "Администратор";
+            var clientName = "Клиент";
+
+            if (await roleManager.FindByNameAsync(adminName) == null)
             {
-                await roleManager.CreateAsync(new IdentityRole("Администратор"));
+                await roleManager.CreateAsync(new IdentityRole(adminName));
             }
-            if (await roleManager.FindByNameAsync("Клиент") == null)
+            if (await roleManager.FindByNameAsync(clientName) == null)
             {
-                await roleManager.CreateAsync(new IdentityRole("Клиент"));
+                await roleManager.CreateAsync(new IdentityRole(clientName));
             }
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
@@ -27,7 +30,7 @@ namespace Library
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(admin, "Администратор");
+                    await userManager.AddToRoleAsync(admin, adminName);
                 }
             }
         }

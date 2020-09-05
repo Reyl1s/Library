@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Library.Models;
+using Library.Database.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ namespace Library.Controllers
     [Authorize(Roles = "Библиотекарь")]
     public class BooksController : Controller
     {
-        LibraryDbContext db;
+        readonly LibraryDbContext db;
         public BooksController(LibraryDbContext context)
         {
             db = context;
