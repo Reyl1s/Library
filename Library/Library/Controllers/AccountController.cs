@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Library.Database.Entities;
 using Library.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Controllers
@@ -36,6 +38,8 @@ namespace Library.Controllers
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
+                    await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -88,7 +92,7 @@ namespace Library.Controllers
         {
             // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Books");
         }
     }
 }
