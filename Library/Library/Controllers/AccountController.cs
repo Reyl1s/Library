@@ -34,11 +34,11 @@ namespace Library.Controllers
                 User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Phone = model.Phone, Year = model.Year };
                 // добавляем пользователя
                 var result = await _userManager.CreateAsync(user, model.Password);
+                await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
                 if (result.Succeeded)
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
-                    await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -64,8 +64,7 @@ namespace Library.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     // проверяем, принадлежит ли URL приложению

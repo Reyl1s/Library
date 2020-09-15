@@ -18,6 +18,9 @@
                     </ul>
                 </div>
                 <div>
+                    <form method="post" asp-controller="Orders" asp-action="UserOrders">
+                        <input type="submit" value="Мои брони" />
+                    </form>
                     <form method="post" asp-controller="Account" asp-action="Logout">
                         <input type="submit" value="Выход" />
                     </form>

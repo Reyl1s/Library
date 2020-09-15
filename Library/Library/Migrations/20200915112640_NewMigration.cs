@@ -193,18 +193,22 @@ namespace Library.Migrations
                 {
                     OrderId = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    User = table.Column<string>(nullable: true),
-                    ContactPhone = table.Column<string>(nullable: true),
-                    BookId = table.Column<int>(nullable: false),
-                    BookId1 = table.Column<long>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    BookId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Orders_Books_BookId1",
-                        column: x => x.BookId1,
+                        name: "FK_Orders_Books_BookId",
+                        column: x => x.BookId,
                         principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -247,9 +251,14 @@ namespace Library.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_BookId1",
+                name: "IX_Orders_BookId",
                 table: "Orders",
-                column: "BookId1");
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -279,10 +288,10 @@ namespace Library.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "AspNetUsers");
         }
     }
 }

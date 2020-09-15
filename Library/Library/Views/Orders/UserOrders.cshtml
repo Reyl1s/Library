@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Library.Database.Entities.Order>
+@{
+    ViewBag.Title = "Список бронирования";
+}
+
+<h2><strong>Брони</strong></h2>
+
+
+<table class="table">
+    @foreach (var item in Model)
+    {
+        <tr align="center">
+            <td>@item.Book.Name </td>
+            <td>@item.Book.Genre </td>
+            <td>@item.Book.Author </td>
+            <td>@item.Book.Publisher </td>
+            <td>
+                <form asp-action="Delete" asp-route-id="@item.OrderId" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Удалить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>
+

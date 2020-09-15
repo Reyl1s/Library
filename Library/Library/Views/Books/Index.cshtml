@@ -37,6 +37,14 @@
                     </form>
                 </td>
             }
+            @if (this.User.IsInRole("Клиент"))
+            {
+                <td>
+                    <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
+                        <input type="submit" value="Забронировать" />
+                    </form>
+                </td>
+            }
         </tr>
     }
 </table>

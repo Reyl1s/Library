@@ -9,13 +9,10 @@ namespace Library.Database.Entities
     {
         public long OrderId { get; set; }
 
-        public string User { get; set; }
+        public User User { get; set; }
 
-        public string ContactPhone { get; set; }
+        public long BookId { get; set; }
 
-
-        public int BookId { get; set; }
-
-        public Book Book { get; set; }
+        public virtual Book Book { get; set; }
     }
 }

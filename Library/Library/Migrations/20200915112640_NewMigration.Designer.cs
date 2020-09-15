@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20200905162557_NewMigration")]
+    [Migration("20200915112640_NewMigration")]
     partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,21 +52,17 @@ namespace Library.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("integer");
-
-                    b.Property<long?>("BookId1")
+                    b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ContactPhone")
-                        .HasColumnType("text");
-
-                    b.Property<string>("User")
+                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("BookId1");
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -299,7 +295,13 @@ namespace Library.Migrations
                 {
                     b.HasOne("Library.Database.Entities.Book", "Book")
                         .WithMany()
-                        .HasForeignKey("BookId1");
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Library.Database.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

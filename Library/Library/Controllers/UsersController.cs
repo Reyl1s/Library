@@ -31,6 +31,7 @@ namespace Library.Controllers
             {
                 User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Phone = model.Phone, Year = model.Year };
                 var result = await _userManager.CreateAsync(user, model.Password);
+                await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");

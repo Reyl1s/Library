@@ -13,5 +13,7 @@ namespace Library.Database.Entities
         public int Year { get; set; }
 
         public string Phone { get; set; }
+
+        public List<Order> Orders { get; set; }
     }
 }
