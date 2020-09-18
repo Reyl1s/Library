@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Library.Database;
 using Library.Database.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,12 @@ namespace Library.Controllers
     public class OrdersController : Controller
     {
         private readonly LibraryDbContext db;
+        private readonly UserManager<User> _userManager;
 
-        public OrdersController(LibraryDbContext context)
+        public OrdersController(LibraryDbContext context, UserManager<User> userManager)
         {
             db = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -24,26 +27,35 @@ namespace Library.Controllers
         }
 
         [HttpGet]
-        public IActionResult Booking(int? id)
+        public IActionResult Booking()
         {
-            if (id == null) return RedirectToAction("Index");
-            ViewBag.BookId = id;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Booking(Order order)
+        public async Task<IActionResult> Booking(int? id)
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            Book book = db.Books.FirstOrDefault(p => p.Id == id);
+            Order order = new Order { BookId = book.Id, UserId = user.Id, User = user };
 
             db.Orders.Add(order);
-            // сохраняем в бд все изменения
             db.SaveChanges();
+
             return RedirectToAction("UserOrders");
         }
 
         public async Task<IActionResult> UserOrders()
         {
-            return View(await db.Orders.Include(x => x.Book).ToListAsync());
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = user.Id;
+            var orders = await db.Orders.Include(b => b.Book).Where(b => b.UserId == userId).ToListAsync();
+            return View(orders);
+        }
+
+        public async Task<IActionResult> AllOrders()
+        {
+            return View(await db.Orders.Include(x => x.Book).Include(b => b.User).ToListAsync());
         }
 
         public ActionResult Delete(int id)

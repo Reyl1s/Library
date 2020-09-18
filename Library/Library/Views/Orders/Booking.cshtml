@@ -6,21 +6,11 @@
 <body>
     <div>
         Здраствуйте, @User.Identity.Name
-        <h3>Форма оформления бронирования</h3>
-        <p>Для оформления бронирования заполните следующие поля:</p>
+        <p>Вы успешно забронировали книгу.</p>
+        <p>Книга будет забронирована на Ваше имя в течение семи дней с сегодняшнего дня.</p>
+        <p>Чтобы завершить бронирование, нажмите кнопку "Продолжить"</p>
         <form method="post">
-            <input type="hidden" value="@ViewBag.BookId" name="BookId" />
-            <table>
-                <tr>
-                    <td>Адрес:</td>
-                    <td><input type="text" name="Address" /></td>
-                </tr>
-                <tr>
-                    <td>Телефон:</td>
-                    <td><input type="text" name="ContactPhone" /></td>
-                </tr>
-                <tr><td><input type="submit" value="Отправить" /> </td><td></td></tr>
-            </table>
+            <input type="submit" value="Продолжить" />
         </form>
     </div>
 </body>

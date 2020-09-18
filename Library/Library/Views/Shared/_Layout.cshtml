@@ -8,43 +8,45 @@
 </head>
 <body>
     <!--меню-->
-    @if (User.Identity.IsAuthenticated)
-    {
-        <nav class="navbar navbar-inverse">
-            <div class="container">
-                <div>
-                    <ul class="nav navbar-nav">
-                        <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <form method="post" asp-controller="Orders" asp-action="UserOrders">
-                        <input type="submit" value="Мои брони" />
-                    </form>
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
+                </ul>
+            </div>
+            <div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @if (this.User.IsInRole("Клиент"))
+                    {
+                        <form method="post" asp-controller="Orders" asp-action="UserOrders">
+                            <input type="submit" value="Мои брони" />
+                        </form>
+                    }
+                    @if (this.User.IsInRole("Библиотекарь"))
+                    {
+                        <form method="post" asp-controller="Orders" asp-action="AllOrders">
+                            <input type="submit" value="Все брони" />
+                        </form>
+                    }
                     <form method="post" asp-controller="Account" asp-action="Logout">
                         <input type="submit" value="Выход" />
                     </form>
-                </div>
+                }
+                else
+                {
+                    <form method="post" asp-controller="Account" asp-action="Login">
+                        <input type="submit" value="Вход" />
+                    </form>
+                    <form method="post" asp-controller="Account" asp-action="Register">
+                        <input type="submit" value="Регистрация" />
+                    </form>
+                }
             </div>
-        </nav>
-    }
-    else
-    {
-        <nav class="navbar navbar-inverse">
-            <div class="container">
-                <div>
-                    <ul class="nav navbar-nav">
-                        <li><a href="~/Home/Index" class="navbar-brand">Главная</a></li>
-                    </ul>
-                </div>
-                <a asp-controller="Account" asp-action="Login">Вход</a>
-                <a asp-controller="Account" asp-action="Register">Регистрация</a>
-                <div>
+        </div>
+    </nav>
 
-                </div>
-            </div>
-        </nav>
-    }
     <!--основной контент-->
     <div class="container body-content">
         @RenderBody()

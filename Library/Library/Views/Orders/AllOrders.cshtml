@@ -1,0 +1,20 @@
+﻿@model IEnumerable<Library.Database.Entities.Order>
+@{
+    ViewBag.Title = "Список бронирования";
+}
+
+<h2><strong>Брони</strong></h2>
+
+
+<table class="table">
+    @foreach (var item in Model)
+    {
+        <tr align="center">
+            <td>@item.Book.Name </td>
+            <td>@item.Book.Genre </td>
+            <td>@item.Book.Author </td>
+            <td>@item.Book.Publisher </td>
+            <td>@item.User.Name </td>
+        </tr>
+    }
+</table>

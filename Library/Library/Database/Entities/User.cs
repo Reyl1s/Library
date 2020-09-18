@@ -14,6 +14,6 @@ namespace Library.Database.Entities
 
         public string Phone { get; set; }
 
-        public List<Order> Orders { get; set; }
+        public List<Order> UserOrders { get; set; }
     }
 }

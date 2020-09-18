@@ -11,13 +11,13 @@ namespace Library
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            var adminEmail = "admin@gmail.com";
-            var adminPassword = "password";
-            var adminName = "Администратор";
-            var librarianEmail = "librarian@gmail.com";
-            var librarianPassword = "password";
-            var librarianName = "Библиотекарь";
-            var clientName = "Клиент";
+            const string adminEmail = "admin@gmail.com";
+            const string adminPassword = "password";
+            const string adminName = "Администратор";
+            const string librarianEmail = "librarian@gmail.com";
+            const string librarianPassword = "password";
+            const string librarianName = "Библиотекарь";
+            const string clientName = "Клиент";
 
             if (await roleManager.FindByNameAsync(adminName) == null)
             {
