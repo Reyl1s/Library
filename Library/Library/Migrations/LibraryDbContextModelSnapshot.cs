@@ -29,6 +29,9 @@ namespace Library.Migrations
                     b.Property<string>("Author")
                         .HasColumnType("text");
 
+                    b.Property<int>("BookStatus")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Genre")
                         .HasColumnType("text");
 
@@ -298,7 +301,7 @@ namespace Library.Migrations
                         .IsRequired();
 
                     b.HasOne("Library.Database.Entities.User", "User")
-                        .WithMany("Orders")
+                        .WithMany("UserOrders")
                         .HasForeignKey("UserId");
                 });
 

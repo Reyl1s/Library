@@ -14,13 +14,17 @@
             <td>@item.Book.Genre </td>
             <td>@item.Book.Author </td>
             <td>@item.Book.Publisher </td>
-            <td>
-                <form asp-action="Delete" asp-route-id="@item.OrderId" method="post">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        Удалить
-                    </button>
-                </form>
-            </td>
+            <td>@item.Book.BookStatus </td>
+            @if(item.Book.BookStatus == Library.Database.Enums.BookStatus.Booked)
+            {
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.OrderId" method="post">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Удалить
+                        </button>
+                    </form>
+                </td>
+            }
         </tr>
     }
 </table>

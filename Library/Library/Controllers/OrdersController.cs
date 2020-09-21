@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Library.Database;
 using Library.Database.Entities;
+using Library.Database.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace Library.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             Book book = db.Books.FirstOrDefault(p => p.Id == id);
+            book.BookStatus = BookStatus.Booked;
             Order order = new Order { BookId = book.Id, UserId = user.Id, User = user };
 
             db.Orders.Add(order);
@@ -60,11 +62,32 @@ namespace Library.Controllers
 
         public ActionResult Delete(int id)
         {
-            Order b = new Order { OrderId = id };
-            db.Entry(b).State = EntityState.Deleted;
+            var order = db.Orders.FirstOrDefault(x => x.OrderId == id);
+            var bookId = order.BookId;
+            Book book = db.Books.FirstOrDefault(p => p.Id == bookId);
+            book.BookStatus = BookStatus.Available;
+
+            db.Entry(order).State = EntityState.Deleted;
             db.SaveChanges();
 
             return RedirectToAction("UserOrders");
+        }
+
+        public ActionResult Subscribe(int id)
+        {
+            return View();
+        }
+
+        public ActionResult Pass(int id)
+        {
+            var order = db.Orders.FirstOrDefault(x => x.OrderId == id);
+            var bookId = order.BookId;
+            Book book = db.Books.FirstOrDefault(p => p.Id == bookId);
+            book.BookStatus = BookStatus.Passed;
+
+            db.SaveChanges();
+
+            return RedirectToAction("AllOrders");
         }
     }
 }

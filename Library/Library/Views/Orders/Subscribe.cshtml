@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Подписка на книгу</title>
+</head>
+<body>
+    <div>
+        Здраствуйте, @User.Identity.Name
+        <p>Вы успешно подписались на книгу. Как только она будет доступна, мы сообщим Вам об этом.</p>
+        <form method="post" asp-controller="Books" asp-action="Index">
+            <input type="submit" value="Список книг" />
+        </form>
+    </div>
+</body>
+</html>

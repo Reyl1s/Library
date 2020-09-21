@@ -59,7 +59,8 @@ namespace Library.Migrations
                     Name = table.Column<string>(nullable: true),
                     Genre = table.Column<string>(nullable: true),
                     Author = table.Column<string>(nullable: true),
-                    Publisher = table.Column<string>(nullable: true)
+                    Publisher = table.Column<string>(nullable: true),
+                    BookStatus = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

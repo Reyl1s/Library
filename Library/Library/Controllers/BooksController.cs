@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Library.Database;
 using Library.Database.Entities;
+using Library.Database.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,7 @@ namespace Library.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook(Book book)
         {
+            book.BookStatus = BookStatus.Available;
             db.Books.Add(book);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");

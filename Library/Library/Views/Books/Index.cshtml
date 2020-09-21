@@ -18,6 +18,8 @@
         <td><strong>Жанр</strong></td>
         <td><strong>Автор</strong></td>
         <td><strong>Издательство</strong></td>
+        <td><strong>Доступность</strong></td>
+        <td></td>
     </tr>
 
     @foreach (var item in Model)
@@ -27,6 +29,7 @@
             <td>@item.Genre</td>
             <td>@item.Author</td>
             <td>@item.Publisher</td>
+            <td>@item.BookStatus</td>
             @if (this.User.IsInRole("Библиотекарь"))
             {
                 <td>
@@ -39,11 +42,23 @@
             }
             @if (this.User.IsInRole("Клиент"))
             {
-                <td>
-                    <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
-                        <input type="submit" value="Забронировать" />
-                    </form>
-                </td>
+                @if(item.BookStatus == Library.Database.Enums.BookStatus.Available)
+                {
+                    <td>
+                        <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
+                            <input type="submit" value="Забронировать" />
+                        </form>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <form asp-route-id="@item.Id" asp-controller="Orders" asp-action="Subscribe">
+                            <input type="submit" value="Подписаться" />
+                        </form>
+                    </td>
+                }
+
             }
         </tr>
     }

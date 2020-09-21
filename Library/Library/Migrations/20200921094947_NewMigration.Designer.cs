@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20200916093925_NewMigration")]
+    [Migration("20200921094947_NewMigration")]
     partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace Library.Migrations
 
                     b.Property<string>("Author")
                         .HasColumnType("text");
+
+                    b.Property<int>("BookStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Genre")
                         .HasColumnType("text");
@@ -300,7 +303,7 @@ namespace Library.Migrations
                         .IsRequired();
 
                     b.HasOne("Library.Database.Entities.User", "User")
-                        .WithMany("Orders")
+                        .WithMany("UserOrders")
                         .HasForeignKey("UserId");
                 });
 
