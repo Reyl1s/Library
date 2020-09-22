@@ -22,11 +22,6 @@ namespace Library.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult Booking()
         {
@@ -52,7 +47,7 @@ namespace Library.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var userId = user.Id;
-            var orders = await db.Orders.Include(b => b.Book).Where(b => b.UserId == userId).ToListAsync();
+            var orders = await db.Orders.Include(b => b.Book).Where(b => b.UserId == userId).OrderBy(b => b.Book.Name).ToListAsync();
             return View(orders);
         }
 
@@ -61,14 +56,14 @@ namespace Library.Controllers
             var oldOrders = await db.Orders.Include(a => a.Book).Include(b => b.User).ToListAsync();
             foreach (var order in oldOrders)
             {
-                if (order.DateBooking < DateTime.Now)
+                if (order.DateBooking < DateTime.Now && order.Book.BookStatus == BookStatus.Booked)
                 {
                     order.Book.BookStatus = BookStatus.Available;
                     db.Entry(order).State = EntityState.Deleted;
                     db.SaveChanges();
                 }
             }
-            var newOrders = await db.Orders.Include(b => b.Book).Include(b => b.User).ToListAsync();
+            var newOrders = await db.Orders.Include(b => b.Book).Include(b => b.User).OrderBy(b => b.Book.Name).ToListAsync();
             return View(newOrders);
         }
 

@@ -23,7 +23,7 @@ namespace Library.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await db.Books.ToListAsync());
+            return View(await db.Books.OrderBy(x => x.Name).ToListAsync());
         }
 
         public IActionResult Create()
