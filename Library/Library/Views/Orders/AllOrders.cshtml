@@ -16,12 +16,23 @@
             <td>@item.Book.Publisher </td>
             <td>@item.User.Name </td>
             <td>@item.Book.BookStatus </td>
+            <td>@item.DateBooking</td>
             @if(item.Book.BookStatus == Library.Database.Enums.BookStatus.Booked)
             {
                 <td>
                     <form asp-action="Pass" asp-route-id="@item.OrderId" method="post">
                         <button type="submit" class="btn btn-primary">
                             Отдать
+                        </button>
+                    </form>
+                </td>
+            }
+            @if(item.Book.BookStatus == Library.Database.Enums.BookStatus.Passed)
+            {
+                <td>
+                    <form asp-action="Return" asp-route-id="@item.OrderId" method="post">
+                        <button type="submit" class="btn btn-primary">
+                            Вернуть
                         </button>
                     </form>
                 </td>

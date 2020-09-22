@@ -7,6 +7,16 @@
 
 
 <table class="table">
+    <tr bgcolor="#D3D3D3" align="center">
+        <td><strong>Название</strong></td>
+        <td><strong>Жанр</strong></td>
+        <td><strong>Автор</strong></td>
+        <td><strong>Издательство</strong></td>
+        <td><strong>Статус</strong></td>
+        <td><strong>Дата автоматического снятия книги с бронирования</strong></td>
+        <td></td>
+    </tr>
+
     @foreach (var item in Model)
     {
         <tr align="center">
@@ -15,7 +25,8 @@
             <td>@item.Book.Author </td>
             <td>@item.Book.Publisher </td>
             <td>@item.Book.BookStatus </td>
-            @if(item.Book.BookStatus == Library.Database.Enums.BookStatus.Booked)
+            <td>@item.DateBooking</td>
+            @if (item.Book.BookStatus == Library.Database.Enums.BookStatus.Booked)
             {
                 <td>
                     <form asp-action="Delete" asp-route-id="@item.OrderId" method="post">

@@ -56,6 +56,9 @@ namespace Library.Migrations
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("DateBooking")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 

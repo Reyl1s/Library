@@ -195,7 +195,8 @@ namespace Library.Migrations
                     OrderId = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(nullable: true),
-                    BookId = table.Column<long>(nullable: false)
+                    BookId = table.Column<long>(nullable: false),
+                    DateBooking = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

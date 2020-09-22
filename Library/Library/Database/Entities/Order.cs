@@ -16,5 +16,7 @@ namespace Library.Database.Entities
         public long BookId { get; set; }
 
         public virtual Book Book { get; set; }
+
+        public DateTime DateBooking { get; set; }
     }
 }

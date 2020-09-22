@@ -40,6 +40,7 @@ namespace Library.Controllers
             Book book = db.Books.FirstOrDefault(p => p.Id == id);
             book.BookStatus = BookStatus.Booked;
             Order order = new Order { BookId = book.Id, UserId = user.Id, User = user };
+            order.DateBooking = DateTime.Now.AddDays(7);
 
             db.Orders.Add(order);
             db.SaveChanges();
@@ -57,7 +58,18 @@ namespace Library.Controllers
 
         public async Task<IActionResult> AllOrders()
         {
-            return View(await db.Orders.Include(x => x.Book).Include(b => b.User).ToListAsync());
+            var oldOrders = await db.Orders.Include(a => a.Book).Include(b => b.User).ToListAsync();
+            foreach (var order in oldOrders)
+            {
+                if (order.DateBooking < DateTime.Now)
+                {
+                    order.Book.BookStatus = BookStatus.Available;
+                    db.Entry(order).State = EntityState.Deleted;
+                    db.SaveChanges();
+                }
+            }
+            var newOrders = await db.Orders.Include(b => b.Book).Include(b => b.User).ToListAsync();
+            return View(newOrders);
         }
 
         public ActionResult Delete(int id)
@@ -85,6 +97,19 @@ namespace Library.Controllers
             Book book = db.Books.FirstOrDefault(p => p.Id == bookId);
             book.BookStatus = BookStatus.Passed;
 
+            db.SaveChanges();
+
+            return RedirectToAction("AllOrders");
+        }
+
+        public ActionResult Return(int id)
+        {
+            var order = db.Orders.FirstOrDefault(x => x.OrderId == id);
+            var bookId = order.BookId;
+            Book book = db.Books.FirstOrDefault(p => p.Id == bookId);
+            book.BookStatus = BookStatus.Available;
+
+            db.Entry(order).State = EntityState.Deleted;
             db.SaveChanges();
 
             return RedirectToAction("AllOrders");
