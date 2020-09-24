@@ -46,8 +46,9 @@ namespace Library.Controllers
         public async Task<IActionResult> UserOrders()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            var userId = user.Id;
-            var orders = await db.Orders.Include(b => b.Book).Where(b => b.UserId == userId).OrderBy(b => b.Book.Name).ToListAsync();
+            var orders = await db.Orders.Include(b => b.Book).Where(b => b.UserId == user.Id).OrderBy(b => b.Book.Name).ToListAsync();
+            if(user.UserOrders == null)
+            { orders = null; }
             return View(orders);
         }
 
@@ -80,7 +81,7 @@ namespace Library.Controllers
             return RedirectToAction("UserOrders");
         }
 
-        public ActionResult Subscribe(int id)
+        public ActionResult Subscribe()
         {
             return View();
         }

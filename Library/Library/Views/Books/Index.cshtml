@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Library.Database.Entities.Book>
+﻿@model Library.Models.BookSearchViewModel
 @{
     ViewBag.Title = "Список книг";
 }
@@ -12,54 +12,86 @@
     </form>
 }
 
+<form asp-controller="Books" asp-action="Index" method="get">
+    <p>
+        <select asp-for="BookGenre" asp-items="Model.Genres">
+            <option value="">Жанр (все)</option>
+        </select>
+
+        <select asp-for="BookAuthor" asp-items="Model.Authors">
+            <option value="">Автор (все)</option>
+        </select>
+
+        <select asp-for="BookPublisher" asp-items="Model.Publisher">
+            <option value="">Издательство (все)</option>
+        </select>
+
+        Название: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Найти" />
+    </p>
+</form>
+
 <table class="table">
-    <tr bgcolor="#D3D3D3" align="center">
-        <td><strong>Название</strong></td>
-        <td><strong>Жанр</strong></td>
-        <td><strong>Автор</strong></td>
-        <td><strong>Издательство</strong></td>
-        <td><strong>Доступность</strong></td>
-        <td></td>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr align="center">
-            <td>@item.Name</td>
-            <td>@item.Genre</td>
-            <td>@item.Author</td>
-            <td>@item.Publisher</td>
-            <td>@item.BookStatus</td>
-            @if (this.User.IsInRole("Библиотекарь"))
-            {
-                <td>
-                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Удалить
-                        </button>
-                    </form>
-                </td>
-            }
-            @if (this.User.IsInRole("Клиент"))
-            {
-                @if(item.BookStatus == Library.Database.Enums.BookStatus.Available)
-                {
-                    <td>
-                        <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
-                            <input type="submit" value="Забронировать" />
-                        </form>
-                    </td>
-                }
-                else
-                {
-                    <td>
-                        <form asp-route-id="@item.Id" asp-controller="Orders" asp-action="Subscribe">
-                            <input type="submit" value="Подписаться" />
-                        </form>
-                    </td>
-                }
-
-            }
+    <thead>
+        <tr bgcolor="#D3D3D3">
+            <td><strong>Название</strong></td>
+            <td><strong>Жанр</strong></td>
+            <td><strong>Автор</strong></td>
+            <td><strong>Издательство</strong></td>
+            <td><strong>Доступность</strong></td>
+            <td></td>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Books)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookStatus)
+                </td>
+                @if (this.User.IsInRole("Библиотекарь"))
+                {
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Удалить
+                            </button>
+                        </form>
+                    </td>
+                }
+                @if (this.User.IsInRole("Клиент"))
+                {
+                    @if (item.BookStatus == Library.Database.Enums.BookStatus.Available)
+                    {
+                        <td>
+                            <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
+                                <input type="submit" value="Забронировать" />
+                            </form>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <form asp-route-id="@item.Id" asp-controller="Orders" asp-action="Subscribe">
+                                <input type="submit" value="Подписаться" />
+                            </form>
+                        </td>
+                    }
+
+                }
+            </tr>
+        }
+    </tbody>
 </table>
