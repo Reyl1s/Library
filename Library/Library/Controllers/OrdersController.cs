@@ -29,7 +29,7 @@ namespace Library.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Booking(int? id)
+        public async Task<IActionResult> Booking(long? id)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             Book book = db.Books.FirstOrDefault(p => p.Id == id);

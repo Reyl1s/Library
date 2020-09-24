@@ -85,7 +85,40 @@ namespace Library.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Delete(int id)
+        public IActionResult Edit(long id)
+        {
+            Book book = db.Books.FirstOrDefault(p => p.Id == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            EditBookViewModel model = new EditBookViewModel { Id = book.Id, Name = book.Name, Genre = book.Genre, Author = book.Author, Publisher = book.Publisher };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EditBookViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Book book = db.Books.FirstOrDefault(p => p.Id == model.Id);
+                if (book != null)
+                {
+                    book.Name = model.Name;
+                    book.Genre = model.Genre;
+                    book.Author = model.Author;
+                    book.Publisher = model.Publisher;
+
+                    db.Books.Update(book);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+            return View(model);
+        }
+
+        public ActionResult Delete(long id)
         {
             Book b = new Book { Id = id };
             db.Entry(b).State = EntityState.Deleted;
