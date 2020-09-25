@@ -2,23 +2,39 @@
 @{
     ViewBag.Title = "Добавление книги";
 }
-<form asp-action="CreateBook" asp-controller="books">
+
+<form asp-action="CreateBook" asp-controller="Books"  method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name" class="control-label">Название</label>
         <input type="text" asp-for="Name" class="form-control" />
     </div>
+
     <div class="form-group">
         <label asp-for="Genre" class="control-label">Жанр</label>
         <input type="text" asp-for="Genre" class="form-control" />
     </div>
+
     <div class="form-group">
         <label asp-for="Author" class="control-label">Автор</label>
         <input type="text" asp-for="Author" class="form-control" />
     </div>
+
     <div class="form-group">
         <label asp-for="Publisher" class="control-label">Издательство</label>
         <input type="text" asp-for="Publisher" class="form-control" />
     </div>
+
+    <div class="form-group">
+        <label asp-for="Description" class="control-label">Описание</label>
+        <input type="text" asp-for="Description" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">Обложка</label>
+        <input type="file" name="uploadedFile" /><br>
+
+    </div>
+
     <div class="form-group">
         <input type="submit" value="Добавить" class="btn btn-default" />
     </div>

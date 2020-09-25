@@ -1,0 +1,46 @@
+﻿@model Library.Database.Entities.Book
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2> @Model.Name</h2>
+
+@if (User.IsInRole("Библиотекарь"))
+{
+    <a asp-action="Edit" asp-controller="Books" asp-route-id="@Model.Id"> Изменить </a>
+    <a asp-action="Delete" asp-controller="Books" asp-route-id="@Model.Id"> Удалить </a>
+}
+
+<div>
+    <img width="300" height="500" src="@Model.ImgPath" />
+
+    @if (User.IsInRole("Клиент"))
+    {
+        <a asp-action="Booking" asp-controller="Orders" asp-route-id="@Model.Id"> Забронировать</a>
+    }
+
+    <dl class="dl-horizontal">
+        <dt>Название книги</dt>
+        <dd>@Model.Name</dd>
+
+        <dt>Жанр</dt>
+        <dd>@Model.Genre</dd>
+
+        <dt>Автор</dt>
+        <dd>@Model.Author</dd>
+
+        <dt>Издательство</dt>
+        <dd>@Model.Publisher</dd>
+
+        <dt>Описание</dt>
+        <dd>@Model.Description</dd>
+
+        <dt>Доступность</dt>
+        <dd>@Model.BookStatus</dd>
+
+    </dl>
+
+
+
+
+</div>

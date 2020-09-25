@@ -19,6 +19,12 @@ namespace Library.Database.Entities
 
         public string Publisher { get; set; }
 
+        public string Description { get; set; }
+
+        public string Img { get; set; }
+
+        public string ImgPath { get; set; }
+
         public BookStatus BookStatus { get; set; }
     }
 }

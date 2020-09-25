@@ -16,5 +16,11 @@ namespace Library.Models
         public string Author { get; set; }
 
         public string Publisher { get; set; }
+
+        public string Description { get; set; }
+
+        public string Img { get; set; }
+
+        public string ImgPath { get; set; }
     }
 }

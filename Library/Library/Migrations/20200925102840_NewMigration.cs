@@ -60,26 +60,14 @@ namespace Library.Migrations
                     Genre = table.Column<string>(nullable: true),
                     Author = table.Column<string>(nullable: true),
                     Publisher = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Img = table.Column<string>(nullable: true),
+                    ImgPath = table.Column<string>(nullable: true),
                     BookStatus = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Books", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IdentityUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<Guid>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityUserClaims", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -279,9 +267,6 @@ namespace Library.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "IdentityUserClaims");
 
             migrationBuilder.DropTable(
                 name: "Orders");
