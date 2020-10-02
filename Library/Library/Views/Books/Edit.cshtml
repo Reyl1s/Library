@@ -2,15 +2,13 @@
 @{
     ViewBag.Title = "Редактирование книги";
 }
-<form asp-action="Edit" asp-controller="Books">
-    <div asp-validation-summary="All" class="text-danger"></div>
-
+<form asp-action="Edit" asp-controller="Books" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <input type="hidden" asp-for="Id" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Name" class="control-label">Имя</label>
+        <label asp-for="Name" class="control-label">Название</label>
         <input type="text" asp-for="Name" class="form-control" />
     </div>
 

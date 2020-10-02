@@ -2,7 +2,10 @@
     ViewData["Title"] = "Домашняя страница";
 }
 
-<p>Добро пожаловать, @User.Identity.Name</p>
+@if (this.User.IsInRole("Клиент"))
+{
+    <p>Добро пожаловать, @ViewBag.UserName!</p>
+}
 
 <form method="post" asp-controller="Books" asp-action="Index">
     <input type="submit" value="Список книг" />

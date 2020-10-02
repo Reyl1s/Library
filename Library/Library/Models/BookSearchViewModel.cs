@@ -1,15 +1,11 @@
-﻿using Library.Database.Entities;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Library.Models
 {
     public class BookSearchViewModel
     {
-        public List<Book> Books { get; set; }
+        public List<DataLayer.Entities.Book> Books { get; set; }
 
         public SelectList Genres { get; set; }
 

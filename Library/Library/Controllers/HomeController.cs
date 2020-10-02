@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DataLayer.Entities;
+using Library.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Library.Models;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<User> userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController
+            (UserManager<User> userManager,
+            ILogger<HomeController> logger)
         {
+            this.userManager = userManager;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            ViewBag.UserName = user.Name;
+
             return View();
         }
 

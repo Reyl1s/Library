@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Library.Database;
-using Library.Database.Entities;
-using Library.Database.Enums;
+﻿using DataLayer.Entities;
+using DataLayer.Enums;
+using DataLayer.Interfaces;
 using Library.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -12,40 +8,50 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
-    
+
     public class BooksController : Controller
     {
-        private readonly LibraryDbContext db;
-
+        private readonly IRepository<Book> bookRepository;
         private readonly IWebHostEnvironment _appEnvironment;
-
         const string librarian = "Библиотекарь";
 
-        public BooksController(LibraryDbContext context, IWebHostEnvironment appEnvironment)
+        public BooksController
+            (IRepository<Book> bookRepository, 
+            IWebHostEnvironment appEnvironment)
         {
-            db = context;
+            this.bookRepository = bookRepository;
             _appEnvironment = appEnvironment;
         }
 
-        public async Task<IActionResult> Index(string bookGenre, string bookAuthor, string bookPublisher, string searchString)
+        public async Task<IActionResult> Index
+            (string bookGenre, 
+            string bookAuthor,
+            string bookPublisher,
+            string searchString)
         {
-            IQueryable<string> genreQuery = from b in db.Books
-                                            orderby b.Genre
-                                            select b.Genre;
+            IQueryable<string> genreQuery = bookRepository
+                                            .GetItems()
+                                            .OrderBy(b => b.Genre)
+                                            .Select(b => b.Genre);
 
-            IQueryable<string> authorQuery = from b in db.Books
-                                            orderby b.Author
-                                            select b.Author;
+            IQueryable<string> authorQuery = bookRepository
+                                            .GetItems()
+                                            .OrderBy(b => b.Author)
+                                            .Select(b => b.Author);
 
-            IQueryable<string> publisherQuery = from b in db.Books
-                                            orderby b.Publisher
-                                            select b.Publisher;
+            IQueryable<string> publisherQuery = bookRepository
+                                            .GetItems()
+                                            .OrderBy(b => b.Publisher)
+                                            .Select(b => b.Publisher);
 
-            var books = from b in db.Books
-                         select b;
+            var books = bookRepository.GetItems();
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -88,10 +94,6 @@ namespace Library.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook(Book book, IFormFile uploadedFile)
         {
-            //book.BookStatus = BookStatus.Available;
-            //db.Books.Add(book);
-            //await db.SaveChangesAsync();
-
             if (uploadedFile != null)
             {
                 string path = "/Files/" + uploadedFile.FileName;
@@ -101,7 +103,7 @@ namespace Library.Controllers
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                Book bookModel = new Book 
+                var bookModel = new Book 
                 { 
                     Id = book.Id, 
                     Name = book.Name, 
@@ -114,21 +116,23 @@ namespace Library.Controllers
                     BookStatus = BookStatus.Available
                 };
 
-                db.Books.Add(bookModel);
-                await db.SaveChangesAsync();
+                bookRepository.Create(bookModel);
             }
 
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = librarian)]
+        [HttpGet]
         public IActionResult Edit(long id)
         {
-            Book book = db.Books.FirstOrDefault(p => p.Id == id);
+            var book = bookRepository.Get(id);
             if (book == null)
             {
                 return NotFound();
             }
-            EditBookViewModel model = new EditBookViewModel 
+
+            var model = new EditBookViewModel 
             {
                 Id = book.Id, 
                 Name = book.Name,
@@ -142,6 +146,7 @@ namespace Library.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> Edit(EditBookViewModel model, IFormFile uploadedFile)
         {
@@ -154,7 +159,7 @@ namespace Library.Controllers
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                Book book = db.Books.FirstOrDefault(p => p.Id == model.Id);
+                var book = bookRepository.Get(model.Id);
                 if (book != null)
                 {
                     book.Name = model.Name;
@@ -165,8 +170,7 @@ namespace Library.Controllers
                     book.Img = uploadedFile.FileName;
                     book.ImgPath = path;
 
-                    db.Books.Update(book);
-                    db.SaveChanges();
+                    bookRepository.Update(book);
 
                     return RedirectToAction("Index");
                 }
@@ -174,48 +178,18 @@ namespace Library.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //public IActionResult Edit(EditBookViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        Book book = db.Books.FirstOrDefault(p => p.Id == model.Id);
-        //        if (book != null)
-        //        {
-        //            book.Name = model.Name;
-        //            book.Genre = model.Genre;
-        //            book.Author = model.Author;
-        //            book.Publisher = model.Publisher;
-        //            book.Description = model.Description;
-        //            book.Img = model.Img;
-
-        //            db.Books.Update(book);
-        //            db.SaveChanges();
-
-        //            return RedirectToAction("Index");
-        //        }
-        //    }
-        //    return View(model);
-        //}
-
         [Authorize(Roles = librarian)]
         public ActionResult Delete(long id)
         {
-            Book b = new Book { Id = id };
-            db.Entry(b).State = EntityState.Deleted;
-            db.SaveChanges();
+            var book = bookRepository.Get(id);
+            bookRepository.Delete(book);
 
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Details(long? id)
+        public IActionResult Details(long id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var book = await db.Books.FirstOrDefaultAsync(b => b.Id == id);
+            var book = bookRepository.Get(id);
             if (book == null)
             {
                 return NotFound();

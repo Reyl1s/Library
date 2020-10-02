@@ -1,13 +1,9 @@
-﻿using Library.Database.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DataLayer.Enums;
+using DataLayer.Interfaces;
 
-
-namespace Library.Database.Entities
+namespace DataLayer.Entities
 {
-    public class Book
+    public class Book : IEntity
     {
         public long Id { get; set; }
 

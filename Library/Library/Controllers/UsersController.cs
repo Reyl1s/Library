@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Library.Database.Entities;
+﻿using DataLayer.Entities;
 using Library.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
-    [Authorize(Roles = "Администратор")]
+    [Authorize(Roles = admin)]
     public class UsersController : Controller
     {
         readonly UserManager<User> _userManager;
+        const string admin = "Администратор";
+        const string client = "Клиент";
 
         public UsersController(UserManager<User> userManager)
         {
@@ -29,9 +30,17 @@ namespace Library.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Phone = model.Phone, Year = model.Year };
+                User user = new User 
+                { 
+                    Email = model.Email,
+                    UserName = model.Email,
+                    Name = model.Name,
+                    Phone = model.Phone,
+                    Year = model.Year 
+                };
+
                 var result = await _userManager.CreateAsync(user, model.Password);
-                await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
+                await _userManager.AddToRolesAsync(user, new List<string> { client });
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -54,7 +63,16 @@ namespace Library.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Phone = user.Phone, Year = user.Year };
+
+            EditUserViewModel model = new EditUserViewModel 
+            { 
+                Id = user.Id, 
+                Email = user.Email,
+                Name = user.Name,
+                Phone = user.Phone,
+                Year = user.Year 
+            };
+
             return View(model);
         }
 
@@ -107,7 +125,13 @@ namespace Library.Controllers
             {
                 return NotFound();
             }
-            ChangePasswordViewModel model = new ChangePasswordViewModel { Id = user.Id, Email = user.Email };
+
+            ChangePasswordViewModel model = new ChangePasswordViewModel 
+            { 
+                Id = user.Id,
+                Email = user.Email 
+            };
+
             return View(model);
         }
 
@@ -119,8 +143,7 @@ namespace Library.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
-                    IdentityResult result =
-                        await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
                         return RedirectToAction("Index");

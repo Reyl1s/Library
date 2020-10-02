@@ -1,5 +1,6 @@
-using Library.Database;
-using Library.Database.Entities;
+using DataLayer;
+using DataLayer.Entities;
+using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -22,8 +23,10 @@ namespace Library
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+
             services.AddDbContextPool<LibraryDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Library")));
 
             services.AddIdentity<User, IdentityRole>(opts =>
             {

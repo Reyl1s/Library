@@ -1,19 +1,22 @@
-﻿using Library.Database.Entities;
+﻿using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
-namespace Library.Database
+namespace DataLayer
 {
     public class LibraryDbContext : IdentityDbContext<User>
     {
-        public DbSet<Book> Books { get; set; }
-
-        public DbSet<Order> Orders { get; set; }
-
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             : base(options)
         {
             Database.Migrate();
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(builder);
         }
     }
 }

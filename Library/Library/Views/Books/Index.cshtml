@@ -77,7 +77,7 @@
 
                 @if (this.User.IsInRole("Клиент"))
                 {
-                    @if (item.BookStatus == Library.Database.Enums.BookStatus.Available)
+                    @if (item.BookStatus == DataLayer.Enums.BookStatus.Available)
                     {
                         <td>
                             <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">

@@ -51,7 +51,7 @@ namespace Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Books",
+                name: "Book",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -67,7 +67,7 @@ namespace Library.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Books", x => x.Id);
+                    table.PrimaryKey("PK_Book", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,10 +177,10 @@ namespace Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Order",
                 columns: table => new
                 {
-                    OrderId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(nullable: true),
                     BookId = table.Column<long>(nullable: false),
@@ -188,15 +188,15 @@ namespace Library.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.PrimaryKey("PK_Order", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Books_BookId",
+                        name: "FK_Order_Book_BookId",
                         column: x => x.BookId,
-                        principalTable: "Books",
+                        principalTable: "Book",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_UserId",
+                        name: "FK_Order_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -241,13 +241,13 @@ namespace Library.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_BookId",
-                table: "Orders",
+                name: "IX_Order_BookId",
+                table: "Order",
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId",
-                table: "Orders",
+                name: "IX_Order_UserId",
+                table: "Order",
                 column: "UserId");
         }
 
@@ -269,13 +269,13 @@ namespace Library.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Order");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "Book");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

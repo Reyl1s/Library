@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DataLayer.Interfaces;
+using System;
 
-namespace Library.Database.Entities
+namespace DataLayer.Entities
 {
-    public class Order
+    public class Order : IEntity
     {
-        public long OrderId { get; set; }
+        public long Id { get; set; }
 
         public string UserId { get; set; }
 

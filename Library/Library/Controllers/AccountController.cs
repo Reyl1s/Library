@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Library.Database.Entities;
+﻿using DataLayer.Entities;
 using Library.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
@@ -15,29 +11,40 @@ namespace Library.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        const string client = "Клиент";
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController
+            (UserManager<User> userManager, 
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Phone = model.Phone, Year = model.Year };
-                // добавляем пользователя
+                User user = new User 
+                { 
+                    Email = model.Email,
+                    UserName = model.Email,
+                    Name = model.Name,
+                    Phone = model.Phone,
+                    Year = model.Year 
+                };
+
                 var result = await _userManager.CreateAsync(user, model.Password);
-                await _userManager.AddToRolesAsync(user, new List<string> { "Клиент" });
+                await _userManager.AddToRolesAsync(user, new List<string> { client });
                 if (result.Succeeded)
                 {
-                    // установка куки
                     await _signInManager.SignInAsync(user, false);
 
                     return RedirectToAction("Index", "Home");
@@ -52,6 +59,7 @@ namespace Library.Controllers
             }
             return View(model);
         }
+
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
@@ -67,7 +75,6 @@ namespace Library.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         return Redirect(model.ReturnUrl);
@@ -89,7 +96,6 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Books");
         }

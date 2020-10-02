@@ -1,9 +1,9 @@
-﻿@model Library.Database.Entities.Book
+﻿@model DataLayer.Entities.Book
 @{
     ViewBag.Title = "Добавление книги";
 }
 
-<form asp-action="CreateBook" asp-controller="Books"  method="post" enctype="multipart/form-data">
+<form asp-action="CreateBook" asp-controller="Books" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name" class="control-label">Название</label>
         <input type="text" asp-for="Name" class="form-control" />

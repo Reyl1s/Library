@@ -1,11 +1,8 @@
-﻿using Library.Database.Entities;
+﻿using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Library
+namespace DataLayer
 {
     public class RoleInitializer
     {
@@ -33,7 +30,12 @@ namespace Library
             }
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
-                User admin = new User { Email = adminEmail, UserName = adminEmail };
+                User admin = new User 
+                { 
+                    Email = adminEmail, 
+                    UserName = adminEmail 
+                };
+
                 IdentityResult result = await userManager.CreateAsync(admin, adminPassword);
                 if (result.Succeeded)
                 {
@@ -42,7 +44,12 @@ namespace Library
             }
             if (await userManager.FindByNameAsync(librarianEmail) == null)
             {
-                User librarian = new User { Email = librarianEmail, UserName = librarianEmail };
+                User librarian = new User 
+                { 
+                    Email = librarianEmail, 
+                    UserName = librarianEmail 
+                };
+
                 IdentityResult result = await userManager.CreateAsync(librarian, librarianPassword);
                 if (result.Succeeded)
                 {

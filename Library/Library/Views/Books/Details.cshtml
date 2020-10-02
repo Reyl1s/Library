@@ -1,4 +1,4 @@
-﻿@model Library.Database.Entities.Book
+﻿@model DataLayer.Entities.Book
 @{
     ViewBag.Title = Model.Name;
 }
@@ -14,33 +14,32 @@
 <div>
     <img width="300" height="500" src="@Model.ImgPath" />
 
-    @if (User.IsInRole("Клиент"))
-    {
-        <a asp-action="Booking" asp-controller="Orders" asp-route-id="@Model.Id"> Забронировать</a>
-    }
-
     <dl class="dl-horizontal">
+        <dd>
+            @if (User.IsInRole("Клиент") && Model.BookStatus == DataLayer.Enums.BookStatus.Available)
+            {
+                <a asp-action="Booking" asp-controller="Orders" asp-route-id="@Model.Id"> Забронировать</a>
+            }
+        </dd>
+
         <dt>Название книги</dt>
-        <dd>@Model.Name</dd>
+        <dd>@Html.DisplayFor(modelItem => Model.Name)</dd>
 
         <dt>Жанр</dt>
-        <dd>@Model.Genre</dd>
+        <dd>@Html.DisplayFor(modelItem => Model.Genre)</dd>
 
         <dt>Автор</dt>
-        <dd>@Model.Author</dd>
+        <dd>@Html.DisplayFor(modelItem => Model.Author)</dd>
 
         <dt>Издательство</dt>
-        <dd>@Model.Publisher</dd>
+        <dd>@Html.DisplayFor(modelItem => Model.Publisher)</dd>
 
         <dt>Описание</dt>
-        <dd>@Model.Description</dd>
+        <dd>@Html.DisplayFor(modelItem => Model.Description)</dd>
 
-        <dt>Доступность</dt>
-        <dd>@Model.BookStatus</dd>
+        <dt>Статус</dt>
+        <dd>@Html.DisplayFor(modelItem => Model.BookStatus)</dd>
 
+        <dd><a asp-action="Index" asp-controller="Books"> Список книг</a></dd>
     </dl>
-
-
-
-
 </div>
