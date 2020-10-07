@@ -1,7 +1,7 @@
-﻿using DataLayer.Entities;
+﻿using BuisnessLayer.Models.BookDTO;
+using DataLayer.Entities;
 using DataLayer.Enums;
 using DataLayer.Interfaces;
-using BuisnessLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -103,7 +103,7 @@ namespace Library.Controllers
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                var bookModel = new Book 
+                var bookModel = new Book
                 { 
                     Id = book.Id, 
                     Name = book.Name, 

@@ -1,4 +1,4 @@
-﻿namespace BuisnessLayer.Models
+﻿namespace BuisnessLayer.Models.BookDTO
 {
     public class EditBookViewModel
     {

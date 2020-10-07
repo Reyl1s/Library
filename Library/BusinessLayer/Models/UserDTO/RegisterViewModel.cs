@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BuisnessLayer.Models
+namespace BuisnessLayer.Models.UserDTO
 {
     public class RegisterViewModel
     {

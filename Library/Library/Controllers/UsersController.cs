@@ -1,5 +1,5 @@
-﻿using DataLayer.Entities;
-using BuisnessLayer.Models;
+﻿using BuisnessLayer.Models.UserDTO;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

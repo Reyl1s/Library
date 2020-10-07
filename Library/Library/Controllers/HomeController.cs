@@ -1,5 +1,5 @@
-﻿using DataLayer.Entities;
-using BuisnessLayer.Models;
+﻿using BuisnessLayer.Models;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

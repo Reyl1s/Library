@@ -1,7 +1,7 @@
 ﻿using DataLayer.Entities;
 using System;
 
-namespace BuisnessLayer.Models
+namespace BuisnessLayer.Models.OrderDTO
 {
     public class OrdersViewModel
     {
