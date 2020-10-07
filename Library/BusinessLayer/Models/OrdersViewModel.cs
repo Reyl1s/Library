@@ -1,7 +1,7 @@
 ﻿using DataLayer.Entities;
 using System;
 
-namespace Library.Models
+namespace BuisnessLayer.Models
 {
     public class OrdersViewModel
     {

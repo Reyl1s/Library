@@ -1,3 +1,5 @@
+using BuisnessLayer.Jobs;
+using BuisnessLayer.Workers;
 using DataLayer;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
@@ -8,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DataLayer.Repos;
 
 namespace Library
 {
@@ -23,10 +26,15 @@ namespace Library
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<JobFactory>();
+            services.AddScoped<DataJob>();
+            services.AddScoped<IOrderChecker, OrderChecker>();
+
+            services.AddTransient(typeof(IBookRepository<>), typeof(BookRepository<>));
+            services.AddTransient(typeof(IOrderRepository<>), typeof(OrderRepository<>));
 
             services.AddDbContextPool<LibraryDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("Library")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("DataLayer")));
 
             services.AddIdentity<User, IdentityRole>(opts =>
             {
@@ -80,6 +88,8 @@ namespace Library
             var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             await RoleInitializer.InitializeAsync(userManager, rolesManager);
+
+            DataScheduler.Start(scope.ServiceProvider);
         }
     }
 }

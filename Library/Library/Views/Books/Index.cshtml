@@ -1,4 +1,4 @@
-﻿@model Library.Models.BookSearchViewModel
+﻿@model BuisnessLayer.Models.BookSearchViewModel
 @{
     ViewBag.Title = "Список книг";
 }
@@ -82,15 +82,6 @@
                         <td>
                             <form method="get" asp-route-id="@item.Id" asp-controller="Orders" asp-action="Booking">
                                 <input type="submit" value="Забронировать" />
-                            </form>
-                        </td>
-                    }
-
-                    else
-                    {
-                        <td>
-                            <form asp-route-id="@item.Id" asp-controller="Orders" asp-action="Subscribe">
-                                <input type="submit" value="Подписаться" />
                             </form>
                         </td>
                     }

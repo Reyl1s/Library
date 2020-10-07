@@ -1,26 +1,27 @@
 ﻿using DataLayer.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace DataLayer
+namespace DataLayer.Repos
 {
-    public class Repository<TEntity> : IRepository<TEntity>
+    public class OrderRepository<TEntity> : IOrderRepository<TEntity>
         where TEntity : class, IEntity
     {
         private readonly LibraryDbContext _context;
 
-        public Repository(LibraryDbContext context)
+        public OrderRepository(LibraryDbContext context)
         {
             _context = context;
         }
 
-        public void Create(TEntity entity)
+        public void CreateOrder(TEntity entity)
         {
             _context.Add(entity);
             _context.SaveChanges();
         }
 
-        public void Delete(TEntity entity)
+        public void DeleteOrder(TEntity entity)
         {
             if (entity != null)
             {
@@ -29,7 +30,16 @@ namespace DataLayer
             }
         }
 
-        public void Delete(IEnumerable<TEntity> entities)
+        public async Task DeleteOrderAsync(TEntity entity)
+        {
+            if (entity != null)
+            {
+                _context.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public void DeleteOrders(IEnumerable<TEntity> entities)
         {
             if (entities.Count() > 0)
             {
@@ -38,17 +48,17 @@ namespace DataLayer
             }
         }
 
-        public IQueryable<TEntity> GetItems()
+        public IQueryable<TEntity> GetOrders()
         {
             return _context.Set<TEntity>();
         }
 
-        public void Update(TEntity entity)
+        public void UpdateOrder(TEntity entity)
         {
             _context.SaveChanges();
         }
 
-        public TEntity Get(long id)
+        public TEntity GetOrder(long id)
         {
             return _context.Set<TEntity>().Find(id);
         }

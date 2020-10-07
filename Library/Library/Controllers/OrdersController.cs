@@ -1,7 +1,7 @@
 ﻿using DataLayer.Entities;
 using DataLayer.Enums;
 using DataLayer.Interfaces;
-using Library.Models;
+using BuisnessLayer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +13,14 @@ namespace Library.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly IRepository<Book> bookRepository;
-        private readonly IRepository<Order> orderRepository;
+        private readonly IBookRepository<Book> bookRepository;
+        private readonly IOrderRepository<Order> orderRepository;
         private readonly UserManager<User> userManager;
 
         public OrdersController
             (UserManager<User> userManager,
-            IRepository<Book> bookRepository,
-            IRepository<Order> orderRepository)
+            IBookRepository<Book> bookRepository,
+            IOrderRepository<Order> orderRepository)
         {
             this.bookRepository = bookRepository;
             this.orderRepository = orderRepository;
@@ -29,9 +29,9 @@ namespace Library.Controllers
         
         public async Task<IActionResult> Booking(long id)
         {
-            var book = bookRepository.Get(id);
+            var book = bookRepository.GetBook(id);
             book.BookStatus = BookStatus.Booked;
-            bookRepository.Update(book);
+            bookRepository.UpdateBook(book);
 
             var user = await userManager.GetUserAsync(HttpContext.User);
 
@@ -39,10 +39,10 @@ namespace Library.Controllers
             {
                 BookId = book.Id,
                 UserId = user.Id,
-                DateBooking = DateTime.Now.AddDays(7)
+                DateBooking = DateTime.Now.AddMinutes(1)
 
             };
-            orderRepository.Create(order);
+            orderRepository.CreateOrder(order);
             user.UserOrders.Add(order);
             await userManager.UpdateAsync(user);
             
@@ -50,13 +50,13 @@ namespace Library.Controllers
             return RedirectToAction("UserOrders");
         }
 
-        public async Task<IActionResult> UserOrders()
+        public IActionResult UserOrders()
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-            
-            var orders = await orderRepository.GetItems()
+            var userId = userManager.GetUserId(HttpContext.User);
+
+            var orders = orderRepository.GetOrders()
                 .Include(b => b.Book)
-                .Where(b => b.UserId == user.Id)
+                .Where(b => b.UserId == userId)
                 .OrderBy(b => b.Book.Name)
                 .Select(b => new OrdersViewModel
                 {
@@ -67,14 +67,14 @@ namespace Library.Controllers
                     Book = b.Book,
                     DateBooking = b.DateBooking
                 })
-                .ToListAsync();
+                .ToList();
 
             return View(orders);
         }
 
         public IActionResult AllOrders()
         {
-            var orders = orderRepository.GetItems()
+            var orders = orderRepository.GetOrders()
                 .Include(b => b.Book)
                 .Include(b => b.User)
                 .OrderBy(b => b.Book.Name)
@@ -94,13 +94,13 @@ namespace Library.Controllers
 
         public ActionResult Delete(long id)
         {
-            var order = orderRepository.Get(id);
+            var order = orderRepository.GetOrder(id);
 
-            var book = bookRepository.Get(order.BookId);
+            var book = bookRepository.GetBook(order.BookId);
             book.BookStatus = BookStatus.Available;
-            bookRepository.Update(book);
+            bookRepository.UpdateBook(book);
 
-            orderRepository.Delete(order);
+            orderRepository.DeleteOrder(order);
 
             return RedirectToAction("UserOrders");
         }
@@ -112,24 +112,24 @@ namespace Library.Controllers
 
         public ActionResult Pass(long id)
         {
-            var order = orderRepository.Get(id);
+            var order = orderRepository.GetOrder(id);
 
-            var book = bookRepository.Get(order.BookId);
+            var book = bookRepository.GetBook(order.BookId);
             book.BookStatus = BookStatus.Passed;
-            bookRepository.Update(book);
+            bookRepository.UpdateBook(book);
 
             return RedirectToAction("AllOrders");
         }
 
         public ActionResult Return(long id)
         {
-            var order = orderRepository.Get(id);
+            var order = orderRepository.GetOrder(id);
 
-            var book = bookRepository.Get(order.BookId);
+            var book = bookRepository.GetBook(order.BookId);
             book.BookStatus = BookStatus.Available;
-            bookRepository.Update(book);
+            bookRepository.UpdateBook(book);
 
-            orderRepository.Delete(order);
+            orderRepository.DeleteOrder(order);
 
             return RedirectToAction("AllOrders");
         }

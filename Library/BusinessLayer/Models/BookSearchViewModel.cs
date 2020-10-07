@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DataLayer.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Library.Models
+namespace BuisnessLayer.Models
 {
     public class BookSearchViewModel
     {
-        public List<DataLayer.Entities.Book> Books { get; set; }
+        public List<Book> Books { get; set; }
 
         public SelectList Genres { get; set; }
 

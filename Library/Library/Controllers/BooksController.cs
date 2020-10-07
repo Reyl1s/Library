@@ -1,7 +1,7 @@
 ﻿using DataLayer.Entities;
 using DataLayer.Enums;
 using DataLayer.Interfaces;
-using Library.Models;
+using BuisnessLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +18,12 @@ namespace Library.Controllers
 
     public class BooksController : Controller
     {
-        private readonly IRepository<Book> bookRepository;
+        private readonly IBookRepository<Book> bookRepository;
         private readonly IWebHostEnvironment _appEnvironment;
         const string librarian = "Библиотекарь";
 
         public BooksController
-            (IRepository<Book> bookRepository, 
+            (IBookRepository<Book> bookRepository, 
             IWebHostEnvironment appEnvironment)
         {
             this.bookRepository = bookRepository;
@@ -37,21 +37,21 @@ namespace Library.Controllers
             string searchString)
         {
             IQueryable<string> genreQuery = bookRepository
-                                            .GetItems()
+                                            .GetBooks()
                                             .OrderBy(b => b.Genre)
                                             .Select(b => b.Genre);
 
             IQueryable<string> authorQuery = bookRepository
-                                            .GetItems()
+                                            .GetBooks()
                                             .OrderBy(b => b.Author)
                                             .Select(b => b.Author);
 
             IQueryable<string> publisherQuery = bookRepository
-                                            .GetItems()
+                                            .GetBooks()
                                             .OrderBy(b => b.Publisher)
                                             .Select(b => b.Publisher);
 
-            var books = bookRepository.GetItems();
+            var books = bookRepository.GetBooks();
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -116,7 +116,7 @@ namespace Library.Controllers
                     BookStatus = BookStatus.Available
                 };
 
-                bookRepository.Create(bookModel);
+                bookRepository.CreateBook(bookModel);
             }
 
             return RedirectToAction("Index");
@@ -126,7 +126,7 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult Edit(long id)
         {
-            var book = bookRepository.Get(id);
+            var book = bookRepository.GetBook(id);
             if (book == null)
             {
                 return NotFound();
@@ -159,7 +159,7 @@ namespace Library.Controllers
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                var book = bookRepository.Get(model.Id);
+                var book = bookRepository.GetBook(model.Id);
                 if (book != null)
                 {
                     book.Name = model.Name;
@@ -170,7 +170,7 @@ namespace Library.Controllers
                     book.Img = uploadedFile.FileName;
                     book.ImgPath = path;
 
-                    bookRepository.Update(book);
+                    bookRepository.UpdateBook(book);
 
                     return RedirectToAction("Index");
                 }
@@ -181,15 +181,15 @@ namespace Library.Controllers
         [Authorize(Roles = librarian)]
         public ActionResult Delete(long id)
         {
-            var book = bookRepository.Get(id);
-            bookRepository.Delete(book);
+            var book = bookRepository.GetBook(id);
+            bookRepository.DeleteBook(book);
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Details(long id)
         {
-            var book = bookRepository.Get(id);
+            var book = bookRepository.GetBook(id);
             if (book == null)
             {
                 return NotFound();

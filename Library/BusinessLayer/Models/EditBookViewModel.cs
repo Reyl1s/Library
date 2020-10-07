@@ -1,4 +1,4 @@
-﻿namespace Library.Models
+﻿namespace BuisnessLayer.Models
 {
     public class EditBookViewModel
     {
