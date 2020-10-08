@@ -1,4 +1,5 @@
-﻿@model IEnumerable<BuisnessLayer.Models.OrderDTO.OrdersViewModel>
+﻿@using DataLayer.Enums
+@model IEnumerable<BuisnessLayer.Models.OrderDTO.OrdersViewModel>
 @{
     ViewBag.Title = "Список бронирования";
 }
@@ -39,7 +40,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DateBooking)
                 </td>
-                @if (item.Book.BookStatus == DataLayer.Enums.BookStatus.Booked)
+                @if (item.Book.BookStatus == BookStatus.Booked)
                 {
                     <td>
                         <form asp-action="Delete" asp-route-id="@item.Id" method="post">

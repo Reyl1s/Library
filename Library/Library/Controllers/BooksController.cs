@@ -22,52 +22,43 @@ namespace Library.Controllers
         private readonly IWebHostEnvironment _appEnvironment;
         const string librarian = "Библиотекарь";
 
-        public BooksController
-            (IBookRepository<Book> bookRepository, 
-            IWebHostEnvironment appEnvironment)
+        public BooksController (IBookRepository<Book> bookRepository, IWebHostEnvironment appEnvironment)
         {
             this.bookRepository = bookRepository;
             _appEnvironment = appEnvironment;
         }
 
-        public async Task<IActionResult> Index
-            (string bookGenre, 
-            string bookAuthor,
-            string bookPublisher,
-            string searchString)
+        // Фильтрация книг.
+        public async Task<IActionResult> Index (string bookGenre, 
+                                                string bookAuthor,
+                                                string bookPublisher,
+                                                string searchString)
         {
-            IQueryable<string> genreQuery = bookRepository
-                                            .GetBooks()
-                                            .OrderBy(b => b.Genre)
-                                            .Select(b => b.Genre);
+            IQueryable<string> genreQuery = bookRepository.GetBooks()
+                                                          .OrderBy(b => b.Genre)
+                                                          .Select(b => b.Genre);
 
-            IQueryable<string> authorQuery = bookRepository
-                                            .GetBooks()
-                                            .OrderBy(b => b.Author)
-                                            .Select(b => b.Author);
+            IQueryable<string> authorQuery = bookRepository.GetBooks()
+                                                          .OrderBy(b => b.Author)
+                                                          .Select(b => b.Author);
 
-            IQueryable<string> publisherQuery = bookRepository
-                                            .GetBooks()
-                                            .OrderBy(b => b.Publisher)
-                                            .Select(b => b.Publisher);
+            IQueryable<string> publisherQuery = bookRepository.GetBooks()
+                                                              .OrderBy(b => b.Publisher)
+                                                              .Select(b => b.Publisher);
 
             var books = bookRepository.GetBooks();
-
             if (!string.IsNullOrEmpty(searchString))
             {
                 books = books.Where(s => s.Name.Contains(searchString));
             }
-
             if (!string.IsNullOrEmpty(bookGenre))
             {
                 books = books.Where(x => x.Genre == bookGenre);
             }
-
             if (!string.IsNullOrEmpty(bookAuthor))
             {
                 books = books.Where(x => x.Author == bookAuthor);
             }
-
             if (!string.IsNullOrEmpty(bookPublisher))
             {
                 books = books.Where(x => x.Publisher == bookPublisher);
@@ -84,19 +75,22 @@ namespace Library.Controllers
             return View(bookSearchVM);
         }
 
+        // GET создание книги.
         [Authorize(Roles = librarian)]
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult CreateBook()
         {
             return View();
         }
 
+        // POST создание книги.
         [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> CreateBook(Book book, IFormFile uploadedFile)
         {
             if (uploadedFile != null)
             {
-                string path = "/Files/" + uploadedFile.FileName;
+                var path = "/Files/" + uploadedFile.FileName;
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
@@ -122,6 +116,7 @@ namespace Library.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET редактирование книги.
         [Authorize(Roles = librarian)]
         [HttpGet]
         public IActionResult Edit(long id)
@@ -143,16 +138,18 @@ namespace Library.Controllers
                 Img = book.Img,
                 ImgPath = book.ImgPath
             };
+
             return View(model);
         }
 
+        // POST редактирование книги.
         [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> Edit(EditBookViewModel model, IFormFile uploadedFile)
         {
             if (uploadedFile != null)
             {
-                string path = "/Files/" + uploadedFile.FileName;
+                var path = "/Files/" + uploadedFile.FileName;
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
@@ -175,9 +172,11 @@ namespace Library.Controllers
                     return RedirectToAction("Index");
                 }
             }
+
             return View(model);
         }
 
+        // Удаление книги.
         [Authorize(Roles = librarian)]
         public ActionResult Delete(long id)
         {
@@ -187,6 +186,7 @@ namespace Library.Controllers
             return RedirectToAction("Index");
         }
 
+        // Подробнее о книге.
         public IActionResult Details(long id)
         {
             var book = bookRepository.GetBook(id);

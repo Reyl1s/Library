@@ -1,4 +1,6 @@
-﻿using DataLayer.Interfaces;
+﻿using DataLayer.Entities;
+using DataLayer.Enums;
+using DataLayer.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,6 +47,13 @@ namespace DataLayer.Repos
 
         public void UpdateBook(TEntity entity)
         {
+            _context.SaveChanges();
+        }
+
+        public void PassBook(Book book)
+        {
+            book.BookStatus = BookStatus.Passed;
+            _context.Update(book);
             _context.SaveChanges();
         }
 

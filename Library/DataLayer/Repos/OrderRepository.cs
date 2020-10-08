@@ -1,7 +1,8 @@
-﻿using DataLayer.Interfaces;
+﻿using DataLayer.Entities;
+using DataLayer.Enums;
+using DataLayer.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataLayer.Repos
 {
@@ -15,16 +16,20 @@ namespace DataLayer.Repos
             _context = context;
         }
 
-        public void CreateOrder(TEntity entity)
+        public void CreateOrder(TEntity entity, Book book)
         {
+            book.BookStatus = BookStatus.Booked;
+            _context.Update(book);
             _context.Add(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteOrder(TEntity entity)
+        public void DeleteOrder(TEntity entity, Book book)
         {
             if (entity != null)
             {
+                book.BookStatus = BookStatus.Available;
+                _context.Update(book);
                 _context.Remove(entity);
                 _context.SaveChanges();
             }

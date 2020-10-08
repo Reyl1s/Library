@@ -1,7 +1,7 @@
 ﻿using BuisnessLayer.Models.OrderDTO;
 using DataLayer.Entities;
-using DataLayer.Enums;
 using DataLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +17,10 @@ namespace Library.Controllers
         private readonly IOrderRepository<Order> orderRepository;
         private readonly UserManager<User> userManager;
 
-        public OrdersController
-            (UserManager<User> userManager,
+        const string client = "Клиент";
+        const string librarian = "Библиотекарь";
+
+        public OrdersController (UserManager<User> userManager,
             IBookRepository<Book> bookRepository,
             IOrderRepository<Order> orderRepository)
         {
@@ -27,33 +29,30 @@ namespace Library.Controllers
             this.userManager = userManager;
         }
         
+        // Бронирование книги.
         public async Task<IActionResult> Booking(long id)
         {
             var book = bookRepository.GetBook(id);
-            book.BookStatus = BookStatus.Booked;
-            bookRepository.UpdateBook(book);
-
             var user = await userManager.GetUserAsync(HttpContext.User);
-
             var order = new Order
             {
                 BookId = book.Id,
                 UserId = user.Id,
-                DateBooking = DateTime.Now.AddMinutes(1)
+                DateBooking = DateTime.Now.AddDays(7)
 
             };
-            orderRepository.CreateOrder(order);
+            orderRepository.CreateOrder(order, book);
             user.UserOrders.Add(order);
             await userManager.UpdateAsync(user);
-            
 
             return RedirectToAction("UserOrders");
         }
 
+        // Брони клиента.
+        [Authorize(Roles = client)]
         public IActionResult UserOrders()
         {
             var userId = userManager.GetUserId(HttpContext.User);
-
             var orders = orderRepository.GetOrders()
                 .Include(b => b.Book)
                 .Where(b => b.UserId == userId)
@@ -72,6 +71,8 @@ namespace Library.Controllers
             return View(orders);
         }
 
+        // Все брони.
+        [Authorize(Roles = librarian)]
         public IActionResult AllOrders()
         {
             var orders = orderRepository.GetOrders()
@@ -92,44 +93,29 @@ namespace Library.Controllers
             return View(orders);
         }
 
+        // Отмена брони/возвращение книги.
         public ActionResult Delete(long id)
         {
             var order = orderRepository.GetOrder(id);
-
             var book = bookRepository.GetBook(order.BookId);
-            book.BookStatus = BookStatus.Available;
-            bookRepository.UpdateBook(book);
+            orderRepository.DeleteOrder(order, book);
 
-            orderRepository.DeleteOrder(order);
-
-            return RedirectToAction("UserOrders");
+            if (this.User.IsInRole(client))
+            {
+                return RedirectToAction("UserOrders");
+            }
+            else
+            {
+                return RedirectToAction("AllOrders");
+            }
         }
 
-        //public ActionResult Subscribe()
-        //{
-        //    return View();
-        //}
-
+        // Отчача книги клиенту.
         public ActionResult Pass(long id)
         {
             var order = orderRepository.GetOrder(id);
-
             var book = bookRepository.GetBook(order.BookId);
-            book.BookStatus = BookStatus.Passed;
-            bookRepository.UpdateBook(book);
-
-            return RedirectToAction("AllOrders");
-        }
-
-        public ActionResult Return(long id)
-        {
-            var order = orderRepository.GetOrder(id);
-
-            var book = bookRepository.GetBook(order.BookId);
-            book.BookStatus = BookStatus.Available;
-            bookRepository.UpdateBook(book);
-
-            orderRepository.DeleteOrder(order);
+            bookRepository.PassBook(book);
 
             return RedirectToAction("AllOrders");
         }

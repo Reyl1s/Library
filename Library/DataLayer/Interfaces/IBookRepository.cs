@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DataLayer.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataLayer.Interfaces
@@ -9,6 +10,8 @@ namespace DataLayer.Interfaces
         void CreateBook(TEntity entity);
 
         void UpdateBook(TEntity entity);
+
+        void PassBook(Book book);
 
         void DeleteBook(TEntity entity);
 

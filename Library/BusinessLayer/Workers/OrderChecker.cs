@@ -10,7 +10,6 @@ namespace BuisnessLayer.Workers
     {
         private readonly IOrderRepository<Order> orderRepository;
         private readonly IBookRepository<Book> bookRepository;
-        private static readonly object _locker = new object();
 
         public OrderChecker(IOrderRepository<Order> orderRepository, IBookRepository<Book> bookRepository)
         {
@@ -21,9 +20,7 @@ namespace BuisnessLayer.Workers
         public void CheckOrder(Order order)
         {
             var book = bookRepository.GetBook(order.BookId);
-            book.BookStatus = BookStatus.Available;
-            bookRepository.UpdateBook(book);
-            orderRepository.DeleteOrder(order);
+            orderRepository.DeleteOrder(order, book);
         }
     }
 }
