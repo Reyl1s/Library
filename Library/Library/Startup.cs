@@ -27,8 +27,8 @@ namespace Library
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<JobFactory>();
-            services.AddScoped<DataJob>();
-            services.AddScoped<IOrderChecker, OrderChecker>();
+            services.AddTransient<DataJob>();
+            services.AddTransient<IOrderChecker, OrderChecker>();
 
             services.AddTransient(typeof(IBookRepository<>), typeof(BookRepository<>));
             services.AddTransient(typeof(IOrderRepository<>), typeof(OrderRepository<>));

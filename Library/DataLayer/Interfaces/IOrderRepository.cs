@@ -15,8 +15,6 @@ namespace DataLayer.Interfaces
 
         void DeleteOrders(IEnumerable<TEntity> entities);
 
-        Task DeleteOrderAsync(TEntity entity);
-
         IQueryable<TEntity> GetOrders();
 
         TEntity GetOrder(long id);

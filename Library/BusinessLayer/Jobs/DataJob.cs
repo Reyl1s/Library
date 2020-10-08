@@ -1,34 +1,47 @@
-﻿using DataLayer.Entities;
+﻿using BuisnessLayer.Workers;
+using DataLayer.Entities;
+using DataLayer.Enums;
 using DataLayer.Interfaces;
-using BuisnessLayer.Workers;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BuisnessLayer.Jobs
 {
+    [DisallowConcurrentExecution]
     public class DataJob : IJob
     {
-        private readonly IOrderRepository<Order> orderRepository;
         private readonly IServiceScopeFactory serviceScopeFactory;
+        private static readonly object _locker = new object();
 
-        public DataJob
-            (IOrderRepository<Order> orderRepository,
-            IServiceScopeFactory serviceScopeFactory)
+        public DataJob(IServiceScopeFactory serviceScopeFactory)
         {
-            this.orderRepository = orderRepository;
             this.serviceScopeFactory = serviceScopeFactory;
         }
 
-        public async Task Execute(IJobExecutionContext context)
+        public Task Execute(IJobExecutionContext context)
         {
-            using (var scope = serviceScopeFactory.CreateScope())
+            lock (_locker)
             {
-                var orderChecker = scope.ServiceProvider.GetService<IOrderChecker>();
-                var orders = orderRepository.GetOrders();
-                foreach (var order in orders)
+                using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    await orderChecker.CheckOrder(order);
+                    var orderChecker = scope.ServiceProvider.GetRequiredService<IOrderChecker>();
+                    var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository<Order>>();
+
+                    var now = DateTime.Now;
+                    var orders = orderRepository.GetOrders()
+                        .Where(x => x.DateBooking <= now)
+                        .Where(x => x.Book.BookStatus == BookStatus.Booked)
+                        .ToList();
+
+                    foreach (var order in orders)
+                    {
+                        orderChecker.CheckOrder(order);
+                    }
+
+                    return Task.CompletedTask;
                 }
             }
         }

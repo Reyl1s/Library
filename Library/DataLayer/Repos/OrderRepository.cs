@@ -30,15 +30,6 @@ namespace DataLayer.Repos
             }
         }
 
-        public async Task DeleteOrderAsync(TEntity entity)
-        {
-            if (entity != null)
-            {
-                _context.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public void DeleteOrders(IEnumerable<TEntity> entities)
         {
             if (entities.Count() > 0)
