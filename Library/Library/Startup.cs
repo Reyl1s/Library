@@ -30,15 +30,15 @@ namespace Library
         public void ConfigureServices(IServiceCollection services)
         {
             
-
+            // Фоновая задача.
             services.AddTransient<JobFactory>();
             services.AddTransient<DataJob>();
             services.AddTransient<IOrderChecker, OrderChecker>();
 
-            services.AddTransient(typeof(IBookRepository<>), typeof(BookRepository<>));
-            services.AddTransient(typeof(IOrderRepository<>), typeof(OrderRepository<>));
+            // Репозиторий и сервисы.
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IOrderService, OrderService>();
 
             services.AddDbContextPool<LibraryDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("DataLayer")));

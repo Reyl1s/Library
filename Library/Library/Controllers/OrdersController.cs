@@ -1,49 +1,31 @@
-﻿using BuisnessLayer.Models.OrderDTO;
+﻿using BusinessLayer.Interfaces;
 using DataLayer.Entities;
-using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly IBookRepository<Book> bookRepository;
-        private readonly IOrderRepository<Order> orderRepository;
         private readonly UserManager<User> userManager;
+        private readonly IOrderService orderService;
 
         const string client = "Клиент";
         const string librarian = "Библиотекарь";
 
-        public OrdersController(UserManager<User> userManager,
-            IBookRepository<Book> bookRepository,
-            IOrderRepository<Order> orderRepository)
+        public OrdersController(UserManager<User> userManager, IOrderService orderService)
         {
-            this.bookRepository = bookRepository;
-            this.orderRepository = orderRepository;
             this.userManager = userManager;
+            this.orderService = orderService;
         }
 
         // Бронирование книги.
         public async Task<IActionResult> Booking(long id)
         {
-            var book = bookRepository.GetBook(id);
             var user = await userManager.GetUserAsync(HttpContext.User);
-            var order = new Order
-            {
-                BookId = book.Id,
-                UserId = user.Id,
-                DateBooking = DateTime.Now.AddDays(7)
-
-            };
-            orderRepository.CreateOrder(order, book);
-            user.UserOrders.Add(order);
-            await userManager.UpdateAsync(user);
+            orderService.CreateOrder(id, user);
 
             return RedirectToAction("UserOrders");
         }
@@ -53,20 +35,7 @@ namespace Library.Controllers
         public IActionResult UserOrders()
         {
             var userId = userManager.GetUserId(HttpContext.User);
-            var orders = orderRepository.GetOrders()
-                .Include(b => b.Book)
-                .Where(b => b.UserId == userId)
-                .OrderBy(b => b.Book.Name)
-                .Select(b => new OrdersViewModel
-                {
-                    Id = b.Id,
-                    UserId = b.UserId,
-                    User = b.User,
-                    BookId = b.BookId,
-                    Book = b.Book,
-                    DateBooking = b.DateBooking
-                })
-                .ToList();
+            var orders = orderService.GetUserOrders(userId);
 
             return View(orders);
         }
@@ -75,20 +44,7 @@ namespace Library.Controllers
         [Authorize(Roles = librarian)]
         public IActionResult AllOrders()
         {
-            var orders = orderRepository.GetOrders()
-                .Include(b => b.Book)
-                .Include(b => b.User)
-                .OrderBy(b => b.Book.Name)
-                .Select(b => new OrdersViewModel
-                {
-                    Id = b.Id,
-                    UserId = b.UserId,
-                    User = b.User,
-                    BookId = b.BookId,
-                    Book = b.Book,
-                    DateBooking = b.DateBooking
-                })
-                .ToList();
+            var orders = orderService.GetAllOrders();
 
             return View(orders);
         }
@@ -96,9 +52,7 @@ namespace Library.Controllers
         // Отмена брони/возвращение книги.
         public ActionResult Delete(long id)
         {
-            var order = orderRepository.GetOrder(id);
-            var book = bookRepository.GetBook(order.BookId);
-            orderRepository.DeleteOrder(order, book);
+            orderService.DeleteOrder(id);
 
             if (this.User.IsInRole(client))
             {
@@ -113,9 +67,7 @@ namespace Library.Controllers
         // Отчача книги клиенту.
         public ActionResult Pass(long id)
         {
-            var order = orderRepository.GetOrder(id);
-            var book = bookRepository.GetBook(order.BookId);
-            bookRepository.PassBook(book);
+            orderService.PassBook(id);
 
             return RedirectToAction("AllOrders");
         }
