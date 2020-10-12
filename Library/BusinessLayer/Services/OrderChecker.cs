@@ -1,9 +1,9 @@
-﻿using DataLayer.Entities;
-using DataLayer.Enums;
+﻿using BuisnessLayer.Interfaces;
+using DataLayer.Entities;
 using DataLayer.Interfaces;
 using Quartz;
 
-namespace BuisnessLayer.Workers
+namespace BuisnessLayer.Services
 {
     [DisallowConcurrentExecution]
     public class OrderChecker : IOrderChecker

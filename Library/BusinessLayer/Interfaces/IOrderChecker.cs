@@ -1,6 +1,6 @@
 ﻿using DataLayer.Entities;
 
-namespace BuisnessLayer.Workers
+namespace BuisnessLayer.Interfaces
 {
     public interface IOrderChecker
     {

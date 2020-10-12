@@ -1,4 +1,5 @@
-﻿@model BuisnessLayer.Models.BookDTO.BookSearchViewModel
+﻿@using BusinessLayer.Models.BookDTO;
+@model BookSearchViewModel
 @{
     ViewBag.Title = "Список книг";
 }
@@ -7,7 +8,7 @@
 
 @if (this.User.IsInRole("Библиотекарь"))
 {
-    <form method="post" asp-controller="Books" asp-action="CreateBook">
+    <form asp-controller="Books" asp-action="Create">
         <input type="submit" value="Добавить книгу" />
     </form>
 }

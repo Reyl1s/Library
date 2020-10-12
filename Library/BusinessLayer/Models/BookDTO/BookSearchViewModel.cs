@@ -2,7 +2,7 @@
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BuisnessLayer.Models.BookDTO
+namespace BusinessLayer.Models.BookDTO
 {
     public class BookSearchViewModel
     {

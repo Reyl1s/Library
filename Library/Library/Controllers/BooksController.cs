@@ -1,16 +1,10 @@
-﻿using BuisnessLayer.Models.BookDTO;
-using DataLayer.Entities;
-using DataLayer.Enums;
-using DataLayer.Interfaces;
+﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Models.BookDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Library.Controllers
@@ -18,67 +12,27 @@ namespace Library.Controllers
 
     public class BooksController : Controller
     {
-        private readonly IBookRepository<Book> bookRepository;
+        private readonly IBookService bookService;
         private readonly IWebHostEnvironment _appEnvironment;
         const string librarian = "Библиотекарь";
 
-        public BooksController (IBookRepository<Book> bookRepository, IWebHostEnvironment appEnvironment)
+        public BooksController(IBookService bookService, IWebHostEnvironment appEnvironment)
         {
-            this.bookRepository = bookRepository;
+            this.bookService = bookService;
             _appEnvironment = appEnvironment;
         }
 
         // Фильтрация книг.
-        public async Task<IActionResult> Index (string bookGenre, 
-                                                string bookAuthor,
-                                                string bookPublisher,
-                                                string searchString)
+        public async Task<IActionResult> Index(string genre, string author, string publisher, string searchString)
         {
-            IQueryable<string> genreQuery = bookRepository.GetBooks()
-                                                          .OrderBy(b => b.Genre)
-                                                          .Select(b => b.Genre);
-
-            IQueryable<string> authorQuery = bookRepository.GetBooks()
-                                                          .OrderBy(b => b.Author)
-                                                          .Select(b => b.Author);
-
-            IQueryable<string> publisherQuery = bookRepository.GetBooks()
-                                                              .OrderBy(b => b.Publisher)
-                                                              .Select(b => b.Publisher);
-
-            var books = bookRepository.GetBooks();
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                books = books.Where(s => s.Name.Contains(searchString));
-            }
-            if (!string.IsNullOrEmpty(bookGenre))
-            {
-                books = books.Where(x => x.Genre == bookGenre);
-            }
-            if (!string.IsNullOrEmpty(bookAuthor))
-            {
-                books = books.Where(x => x.Author == bookAuthor);
-            }
-            if (!string.IsNullOrEmpty(bookPublisher))
-            {
-                books = books.Where(x => x.Publisher == bookPublisher);
-            }
-
-            var bookSearchVM = new BookSearchViewModel
-            {
-                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
-                Authors = new SelectList(await authorQuery.Distinct().ToListAsync()),
-                Publisher = new SelectList(await publisherQuery.Distinct().ToListAsync()),
-                Books = await books.OrderBy(b => b.Name).ToListAsync()
-            };
+            var bookSearchVM = await bookService.BookSearchAsync(genre, author, publisher, searchString);
 
             return View(bookSearchVM);
         }
 
         // GET создание книги.
         [Authorize(Roles = librarian)]
-        [HttpGet]
-        public IActionResult CreateBook()
+        public IActionResult Create()
         {
             return View();
         }
@@ -86,31 +40,19 @@ namespace Library.Controllers
         // POST создание книги.
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> CreateBook(Book book, IFormFile uploadedFile)
+        public async Task<IActionResult> CreateBook(BookViewModel book, IFormFile uploadedFile)
         {
             if (uploadedFile != null)
             {
-                var path = "/Files/" + uploadedFile.FileName;
+                var uploadedFileName = uploadedFile.FileName;
+                var path = "/Files/" + uploadedFileName;
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                var bookModel = new Book
-                { 
-                    Id = book.Id, 
-                    Name = book.Name, 
-                    Genre = book.Genre, 
-                    Author = book.Author,
-                    Publisher = book.Publisher,
-                    Description = book.Description,
-                    Img = uploadedFile.FileName, 
-                    ImgPath = path,
-                    BookStatus = BookStatus.Available
-                };
-
-                bookRepository.CreateBook(bookModel);
+                bookService.CreateBook(book, path, uploadedFileName);
             }
 
             return RedirectToAction("Index");
@@ -121,23 +63,7 @@ namespace Library.Controllers
         [HttpGet]
         public IActionResult Edit(long id)
         {
-            var book = bookRepository.GetBook(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            var model = new EditBookViewModel 
-            {
-                Id = book.Id, 
-                Name = book.Name,
-                Genre = book.Genre,
-                Author = book.Author,
-                Publisher = book.Publisher,
-                Description = book.Description,
-                Img = book.Img,
-                ImgPath = book.ImgPath
-            };
+            var model = bookService.EditBookGet(id);
 
             return View(model);
         }
@@ -145,43 +71,29 @@ namespace Library.Controllers
         // POST редактирование книги.
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> Edit(EditBookViewModel model, IFormFile uploadedFile)
+        public async Task<IActionResult> Edit(EditBookViewModel bookModel, IFormFile uploadedFile)
         {
             if (uploadedFile != null)
             {
-                var path = "/Files/" + uploadedFile.FileName;
+                var uploadedFileName = uploadedFile.FileName;
+                var path = "/Files/" + uploadedFileName;
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
 
-                var book = bookRepository.GetBook(model.Id);
-                if (book != null)
-                {
-                    book.Name = model.Name;
-                    book.Genre = model.Genre;
-                    book.Author = model.Author;
-                    book.Publisher = model.Publisher;
-                    book.Description = model.Description;
-                    book.Img = uploadedFile.FileName;
-                    book.ImgPath = path;
-
-                    bookRepository.UpdateBook(book);
-
-                    return RedirectToAction("Index");
-                }
+                bookService.EditBookPost(bookModel, path, uploadedFileName);
             }
 
-            return View(model);
+            return RedirectToAction("Index");
         }
 
         // Удаление книги.
         [Authorize(Roles = librarian)]
         public ActionResult Delete(long id)
         {
-            var book = bookRepository.GetBook(id);
-            bookRepository.DeleteBook(book);
+            bookService.Delete(id);
 
             return RedirectToAction("Index");
         }
@@ -189,11 +101,7 @@ namespace Library.Controllers
         // Подробнее о книге.
         public IActionResult Details(long id)
         {
-            var book = bookRepository.GetBook(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
+            BookViewModel book = bookService.GetBook(id);
 
             return View(book);
         }

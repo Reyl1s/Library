@@ -20,7 +20,7 @@ namespace Library.Controllers
         const string client = "Клиент";
         const string librarian = "Библиотекарь";
 
-        public OrdersController (UserManager<User> userManager,
+        public OrdersController(UserManager<User> userManager,
             IBookRepository<Book> bookRepository,
             IOrderRepository<Order> orderRepository)
         {
@@ -28,7 +28,7 @@ namespace Library.Controllers
             this.orderRepository = orderRepository;
             this.userManager = userManager;
         }
-        
+
         // Бронирование книги.
         public async Task<IActionResult> Booking(long id)
         {

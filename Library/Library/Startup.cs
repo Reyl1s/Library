@@ -1,5 +1,4 @@
 using BuisnessLayer.Jobs;
-using BuisnessLayer.Workers;
 using DataLayer;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
@@ -11,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DataLayer.Repos;
+using BuisnessLayer.Interfaces;
+using BuisnessLayer.Services;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Services;
 
 namespace Library
 {
@@ -26,12 +29,16 @@ namespace Library
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+
             services.AddTransient<JobFactory>();
             services.AddTransient<DataJob>();
             services.AddTransient<IOrderChecker, OrderChecker>();
 
             services.AddTransient(typeof(IBookRepository<>), typeof(BookRepository<>));
             services.AddTransient(typeof(IOrderRepository<>), typeof(OrderRepository<>));
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IBookService, BookService>();
 
             services.AddDbContextPool<LibraryDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("DataLayer")));

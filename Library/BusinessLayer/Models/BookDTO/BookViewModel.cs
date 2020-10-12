@@ -1,6 +1,8 @@
-﻿namespace BusinessLayer.Models.BookDTO
+﻿using DataLayer.Enums;
+
+namespace BusinessLayer.Models.BookDTO
 {
-    public class EditBookViewModel
+    public class BookViewModel
     {
         public long Id { get; set; }
 
@@ -17,5 +19,7 @@
         public string Img { get; set; }
 
         public string ImgPath { get; set; }
+
+        public BookStatus BookStatus { get; set; }
     }
 }
