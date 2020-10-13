@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace BuisnessLayer.Models.UserDTO
+namespace BusinessLayer.Models.UserDTO
 {
     public class ChangeRoleViewModel
     {

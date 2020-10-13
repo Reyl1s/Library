@@ -1,4 +1,4 @@
-﻿using BuisnessLayer.Models;
+﻿using BusinessLayer.Models;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-namespace BuisnessLayer.Models
+namespace BusinessLayer.Models
 {
     public class ErrorViewModel
     {

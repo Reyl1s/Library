@@ -1,24 +1,17 @@
-﻿using BuisnessLayer.Models.UserDTO;
-using DataLayer.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using BusinessLayer.Models.UserDTO;
+using BusinessLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Library.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        const string client = "Клиент";
+        private readonly IUserService userService;
 
-        public AccountController
-            (UserManager<User> userManager, 
-            SignInManager<User> signInManager)
+        public AccountController (IUserService userService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -32,20 +25,23 @@ namespace Library.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User 
-                { 
-                    Email = model.Email,
-                    UserName = model.Email,
-                    Name = model.Name,
-                    Phone = model.Phone,
-                    Year = model.Year 
-                };
+                //User user = new User 
+                //{ 
+                //    Email = model.Email,
+                //    UserName = model.Email,
+                //    Name = model.Name,
+                //    Phone = model.Phone,
+                //    Year = model.Year 
+                //};
 
-                var result = await _userManager.CreateAsync(user, model.Password);
-                await _userManager.AddToRolesAsync(user, new List<string> { client });
+                //var result = await _userManager.CreateAsync(user, model.Password);
+                //await _userManager.AddToRolesAsync(user, new List<string> { client });
+
+                var result = await userService.CreateUserAsync(model);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
+                    var userModel = await userService.GetUserModelByEmail(model.Email);
+                    await userService.SignInAsync(userModel);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -72,7 +68,8 @@ namespace Library.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                //var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await userService.PasswordSignInAsync(model);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -96,7 +93,7 @@ namespace Library.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await userService.SignOutAsync();
             return RedirectToAction("Index", "Books");
         }
     }

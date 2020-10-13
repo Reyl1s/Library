@@ -39,9 +39,11 @@ namespace Library
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IUserService, UserService>();
 
             services.AddDbContextPool<LibraryDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("DataLayer")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
+                b => b.MigrationsAssembly("DataLayer")));
 
             services.AddIdentity<User, IdentityRole>(opts =>
             {
@@ -76,7 +78,7 @@ namespace Library
 
             app.UseRouting();
 
-            app.UseAuthentication();    // подключение аутентификации
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -87,15 +89,14 @@ namespace Library
             });
 
             var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-
             var scope = scopeFactory.CreateScope();
 
+            // Добавление админа и библиотекаря, если их нет.
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
             var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
             await RoleInitializer.InitializeAsync(userManager, rolesManager);
 
+            // Фоновая задача.
             DataScheduler.Start(scope.ServiceProvider);
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace BuisnessLayer.Models.UserDTO
+﻿namespace BusinessLayer.Models.UserDTO
 {
     public class CreateUserViewModel
     {
