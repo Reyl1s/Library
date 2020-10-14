@@ -1,10 +1,7 @@
-﻿using BusinessLayer.Models.UserDTO;
-using DataLayer.Entities;
+﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Library.Controllers
@@ -12,35 +9,58 @@ namespace Library.Controllers
     [Authorize(Roles = admin)]
     public class UsersController : Controller
     {
-        readonly UserManager<User> _userManager;
+        private readonly IUserService userService;
         const string admin = "Администратор";
-        const string client = "Клиент";
 
-        public UsersController(UserManager<User> userManager)
+        public UsersController(IUserService userService)
         {
-            _userManager = userManager;
+            this.userService = userService;
         }
 
-        public IActionResult Index() => View(_userManager.Users.ToList());
+        // Список всех пользователей.
+        public IActionResult Index() => View(userService.GetUsers());
 
+        // View создание нового пользователя.
         public IActionResult Create() => View();
 
+        // POST создание нового пользователя.
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = new User 
-                { 
-                    Email = model.Email,
-                    UserName = model.Email,
-                    Name = model.Name,
-                    Phone = model.Phone,
-                    Year = model.Year 
-                };
+                var result = await userService.CreateUserAsync(model);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model);
+                }
+            }
+            return View(model);
+        }
 
-                var result = await _userManager.CreateAsync(user, model.Password);
-                await _userManager.AddToRolesAsync(user, new List<string> { client });
+        // GET редактирование пользователя.
+        public async Task<IActionResult> Edit(string id)
+        {
+            var model = await userService.EditUserGet(id);
+
+            return View(model);
+        }
+
+        // POST редактирование пользователя.
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await userService.EditUserPost(model);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -56,109 +76,40 @@ namespace Library.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Edit(string id)
-        {
-            User user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            EditUserViewModel model = new EditUserViewModel 
-            { 
-                Id = user.Id, 
-                Email = user.Email,
-                Name = user.Name,
-                Phone = user.Phone,
-                Year = user.Year 
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                User user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
-                {
-                    user.Email = model.Email;
-                    user.UserName = model.Email;
-                    user.Name = model.Name;
-                    user.Phone = model.Phone;
-                    user.Year = model.Year;
-
-                    var result = await _userManager.UpdateAsync(user);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                    }
-                }
-            }
-            return View(model);
-        }
-
+        // Удаление пользователя.
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                IdentityResult result = await _userManager.DeleteAsync(user);
-            }
+            await userService.DeleteUserAsync(id);
+
             return RedirectToAction("Index");
         }
 
+        // GET изменение пароля пользователя.
         public async Task<IActionResult> ChangePassword(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            ChangePasswordViewModel model = new ChangePasswordViewModel 
-            { 
-                Id = user.Id,
-                Email = user.Email 
-            };
+            var model = await userService.ChangePasswordGet(id);
 
             return View(model);
         }
 
+        // POST изменение пароля пользователя.
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
+                var result = await userService.ChangePasswordPost(model);
+                if (result.Succeeded)
                 {
-                    IdentityResult result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                    }
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
             return View(model);

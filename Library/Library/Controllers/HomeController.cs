@@ -13,9 +13,7 @@ namespace Library.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<User> userManager;
 
-        public HomeController
-            (UserManager<User> userManager,
-            ILogger<HomeController> logger)
+        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger)
         {
             this.userManager = userManager;
             _logger = logger;
