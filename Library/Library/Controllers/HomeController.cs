@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Models;
+﻿using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +12,24 @@ namespace Library.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly UserManager<User> userManager;
+        private readonly IUserService userService;
+        private readonly string client = "Клиент";
 
-        public HomeController(UserManager<User> userManager, ILogger<HomeController> logger)
+        public HomeController(IUserService userService, ILogger<HomeController> logger)
         {
-            this.userManager = userManager;
+            this.userService = userService;
             _logger = logger;
         }
 
+        // Главная страница юзера.
         public async Task<IActionResult> Index()
         {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-            ViewBag.UserName = user.Name;
-
+            if (User.IsInRole(client))
+            {
+                var user = await userService.GetUserModelAsync(HttpContext.User);
+                ViewBag.UserName = user.Name;
+            }
+            
             return View();
         }
 

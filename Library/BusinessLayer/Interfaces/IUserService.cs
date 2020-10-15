@@ -2,6 +2,7 @@
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces
@@ -43,5 +44,7 @@ namespace BusinessLayer.Interfaces
         public Task<ChangePasswordViewModel> ChangePasswordGet(string id);
 
         public Task<IdentityResult> ChangePasswordPost(ChangePasswordViewModel model);
+
+        public Task<UserViewModel> GetUserModelAsync(ClaimsPrincipal HttpUserContext);
     }
 }

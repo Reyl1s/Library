@@ -14,14 +14,14 @@ namespace Library.Controllers
             this.userService = userService;
         }
 
-        // GET метод регистрации.
-        [HttpGet]
+        // GET регистрации.
+        [HttpPost]
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST метод регистрации.
+        // POST регистрации.
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -48,14 +48,14 @@ namespace Library.Controllers
             return View(model);
         }
 
-        // GET метод авторизации.
+        // GET авторизации.
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
-        // POST метод авторизации.
+        // POST авторизации.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -82,7 +82,7 @@ namespace Library.Controllers
             return View(model);
         }
 
-        // Метод выхода из аккаунта.
+        // Выход из аккаунта.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

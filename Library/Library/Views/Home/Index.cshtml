@@ -6,6 +6,10 @@
 {
     <p>Добро пожаловать, @ViewBag.UserName!</p>
 }
+else 
+{
+    <p>Добро пожаловать!</p>
+} 
 
 <form method="post" asp-controller="Books" asp-action="Index">
     <input type="submit" value="Список книг" />

@@ -4,6 +4,7 @@ using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
@@ -208,6 +209,17 @@ namespace BusinessLayer.Services
             await userManager.AddToRolesAsync(user, new List<string> { client });
 
             return result;
+        }
+
+        public async Task<UserViewModel> GetUserModelAsync(ClaimsPrincipal HttpUserContext)
+        {
+            var user = await userManager.GetUserAsync(HttpUserContext);
+            var userModel = new UserViewModel
+            {
+                Name = user.Name
+            };
+
+            return userModel;
         }
     }
 }

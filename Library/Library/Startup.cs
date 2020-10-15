@@ -85,7 +85,7 @@ namespace Library
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Books}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
             var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
