@@ -17,9 +17,9 @@ namespace BusinessLayer.Interfaces
 
         public void Delete(long id);
 
-        public Task<BookSearchViewModel> BookSearchAsync(string searchString,
-                                                        string bookGenre,
+        public Task<BookSearchViewModel> BookSearchAsync(string bookGenre,
                                                         string bookAuthor,
-                                                        string bookPublisher);
+                                                        string bookPublisher,
+                                                        string searchString);
     }
 }

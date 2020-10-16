@@ -15,7 +15,7 @@ namespace Library.Controllers
         }
 
         // GET регистрации.
-        [HttpPost]
+        [HttpGet]
         public IActionResult Register()
         {
             return View();

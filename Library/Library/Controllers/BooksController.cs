@@ -23,9 +23,9 @@ namespace Library.Controllers
         }
 
         // Фильтрация книг.
-        public async Task<IActionResult> Index(string genre, string author, string publisher, string searchString)
+        public async Task<IActionResult> Index(string bookGenre, string bookAuthor, string bookPublisher, string searchString)
         {
-            var bookSearchVM = await bookService.BookSearchAsync(genre, author, publisher, searchString);
+            var bookSearchVM = await bookService.BookSearchAsync(bookGenre, bookAuthor, bookPublisher, searchString);
 
             return View(bookSearchVM);
         }

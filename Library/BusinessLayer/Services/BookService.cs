@@ -105,10 +105,10 @@ namespace BusinessLayer.Services
             bookRepository.Delete(book);
         }
 
-        public async Task<BookSearchViewModel> BookSearchAsync(string searchString,
-                                            string bookGenre,
+        public async Task<BookSearchViewModel> BookSearchAsync(string bookGenre,
                                             string bookAuthor,
-                                            string bookPublisher)
+                                            string bookPublisher,
+                                            string searchString)
         {
             IQueryable<string> genreQuery = bookRepository.GetItems()
                                                         .OrderBy(b => b.Genre)
