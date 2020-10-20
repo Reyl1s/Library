@@ -1,7 +1,10 @@
 using BuisnessLayer.Jobs;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Services;
 using DataLayer;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
+using DataLayer.Repos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,11 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DataLayer.Repos;
-using BuisnessLayer.Interfaces;
-using BuisnessLayer.Services;
-using BusinessLayer.Interfaces;
-using BusinessLayer.Services;
 
 namespace Library
 {
@@ -29,17 +27,16 @@ namespace Library
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
             // Фоновая задача.
             services.AddTransient<JobFactory>();
             services.AddTransient<DataJob>();
-            services.AddTransient<IOrderChecker, OrderChecker>();
 
             // Репозиторий и сервисы.
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IReportService, ReportService>();
 
             services.AddDbContextPool<LibraryDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),

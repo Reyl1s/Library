@@ -6,10 +6,10 @@
 {
     <p>Добро пожаловать, @ViewBag.UserName!</p>
 }
-else 
+else
 {
     <p>Добро пожаловать!</p>
-} 
+}
 
 <form method="post" asp-controller="Books" asp-action="Index">
     <input type="submit" value="Список книг" />
@@ -23,5 +23,12 @@ else
 
     <form method="post" asp-controller="Roles" asp-action="Index">
         <input type="submit" value="Список ролей" />
+    </form>
+}
+
+@if (this.User.IsInRole("Библиотекарь"))
+{
+    <form method="post" asp-controller="Reports" asp-action="ReportIndex">
+        <input type="submit" value="Отчеты" />
     </form>
 }

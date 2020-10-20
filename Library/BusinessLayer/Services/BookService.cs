@@ -105,22 +105,20 @@ namespace BusinessLayer.Services
             bookRepository.Delete(book);
         }
 
-        public async Task<BookSearchViewModel> BookSearchAsync(string bookGenre,
-                                            string bookAuthor,
-                                            string bookPublisher,
-                                            string searchString)
+        public async Task<BookSearchViewModel> BookSearchAsync(string bookGenre, string bookAuthor,
+            string bookPublisher, string searchString)
         {
-            IQueryable<string> genreQuery = bookRepository.GetItems()
-                                                        .OrderBy(b => b.Genre)
-                                                        .Select(b => b.Genre);
+            var genreQuery = bookRepository.GetItems()
+                .OrderBy(b => b.Genre)
+                .Select(b => b.Genre);
 
-            IQueryable<string> authorQuery = bookRepository.GetItems()
-                                                        .OrderBy(b => b.Author)
-                                                        .Select(b => b.Author);
+            var authorQuery = bookRepository.GetItems()
+                .OrderBy(b => b.Author)
+                .Select(b => b.Author);
 
-            IQueryable<string> publisherQuery = bookRepository.GetItems()
-                                                            .OrderBy(b => b.Publisher)
-                                                            .Select(b => b.Publisher);
+            var publisherQuery = bookRepository.GetItems()
+                .OrderBy(b => b.Publisher)
+                .Select(b => b.Publisher);
 
             var books = bookRepository.GetItems();
             if (!string.IsNullOrEmpty(searchString))

@@ -1,0 +1,65 @@
+﻿@using BusinessLayer.Models.OrderDTO;
+@using DataLayer.Enums;
+@model OrdersListViewModel
+@{
+    ViewBag.Title = "Отчеты";
+}
+
+<h2><strong>Отчеты</strong></h2>
+
+<form asp-controller="Reports" asp-action="ReportIndex" method="get">
+    <p>
+        <select asp-for="OrderStatus">
+            <option value="All">Статус (все)</option>
+            <option value="Booked">Забронированные</option>
+            <option value="Cancelled">Отмененные</option>
+            <option value="Returned">Завершенные</option>
+        </select>
+
+        <select asp-for="TimeInterval">
+            <option value="0">За все время</option>
+            <option value="1">За день</option>
+            <option value="2">За неделю</option>
+            <option value="3">За месяц</option>
+        </select>
+
+        <input type="submit" value="Поиск" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr bgcolor="#D3D3D3">
+            <td><strong>Название книги</strong></td>
+            <td><strong>Имя клиента</strong></td>
+            <td><strong>Статус</strong></td>
+            <td><strong>Дата брони</strong></td>
+            <td><strong>Дата снятия с брони</strong></td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Orders)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateBooking)
+                </td>
+                <td>
+                    @if (item.OrderStatus != OrderStatus.Booked)
+                    {
+                        @Html.DisplayFor(modelItem => item.DateSend)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

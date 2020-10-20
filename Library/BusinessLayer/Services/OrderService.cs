@@ -28,7 +28,9 @@ namespace BusinessLayer.Services
             {
                 BookId = book.Id,
                 UserId = user.Id,
-                DateBooking = DateTime.Now.AddDays(7)
+                DateSend = DateTime.Now.AddDays(7),
+                DateBooking = DateTime.Now,
+                OrderStatus = OrderStatus.Booked
 
             };
             orderRepository.Create(order);
@@ -41,6 +43,7 @@ namespace BusinessLayer.Services
             var orders = orderRepository.GetItems()
                 .Include(b => b.Book)
                 .Where(b => b.UserId == userId)
+                .Where(b => b.OrderStatus == OrderStatus.Booked)
                 .OrderBy(b => b.Book.Name)
                 .Select(b => new OrdersViewModel
                 {
@@ -49,7 +52,7 @@ namespace BusinessLayer.Services
                     User = b.User,
                     BookId = b.BookId,
                     Book = b.Book,
-                    DateBooking = b.DateBooking
+                    DateSend = b.DateSend
                 })
                 .ToList();
 
@@ -61,6 +64,7 @@ namespace BusinessLayer.Services
             var orders = orderRepository.GetItems()
                 .Include(b => b.Book)
                 .Include(b => b.User)
+                .Where(b => b.OrderStatus == OrderStatus.Booked)
                 .OrderBy(b => b.Book.Name)
                 .Select(b => new OrdersViewModel
                 {
@@ -69,7 +73,7 @@ namespace BusinessLayer.Services
                     User = b.User,
                     BookId = b.BookId,
                     Book = b.Book,
-                    DateBooking = b.DateBooking
+                    DateSend = b.DateSend
                 })
                 .ToList();
 
@@ -80,7 +84,16 @@ namespace BusinessLayer.Services
         {
             var order = orderRepository.Get(id);
             var book = bookRepository.Get(order.BookId);
-            orderRepository.Delete(order);
+            if (book.BookStatus == BookStatus.Booked)
+            {
+                order.OrderStatus = OrderStatus.Cancelled;
+                order.DateSend = DateTime.Now;
+            }
+            else if(book.BookStatus == BookStatus.Passed)
+            {
+                order.OrderStatus = OrderStatus.Returned;
+                order.DateSend = DateTime.Now;
+            }
             book.BookStatus = BookStatus.Available;
             bookRepository.Update(book);
         }
@@ -90,6 +103,14 @@ namespace BusinessLayer.Services
             var order = orderRepository.Get(id);
             var book = bookRepository.Get(order.BookId);
             book.BookStatus = BookStatus.Passed;
+            bookRepository.Update(book);
+        }
+
+        public void CheckOrder(Order order)
+        {
+            var book = bookRepository.Get(order.BookId);
+            order.OrderStatus = OrderStatus.Cancelled;
+            book.BookStatus = BookStatus.Available;
             bookRepository.Update(book);
         }
     }

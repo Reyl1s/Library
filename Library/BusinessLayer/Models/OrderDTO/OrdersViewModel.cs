@@ -15,6 +15,6 @@ namespace BuisnessLayer.Models.OrderDTO
 
         public Book Book { get; set; }
 
-        public DateTime DateBooking { get; set; }
+        public DateTime DateSend { get; set; }
     }
 }

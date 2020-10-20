@@ -1,4 +1,5 @@
-﻿using DataLayer.Interfaces;
+﻿using DataLayer.Enums;
+using DataLayer.Interfaces;
 using System;
 
 namespace DataLayer.Entities
@@ -15,6 +16,10 @@ namespace DataLayer.Entities
 
         public Book Book { get; set; }
 
+        public DateTime DateSend { get; set; }
+
         public DateTime DateBooking { get; set; }
+
+        public OrderStatus OrderStatus { get; set; }
     }
 }

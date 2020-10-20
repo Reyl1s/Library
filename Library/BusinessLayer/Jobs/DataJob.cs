@@ -1,4 +1,4 @@
-﻿using BuisnessLayer.Interfaces;
+﻿using BusinessLayer.Interfaces;
 using DataLayer.Entities;
 using DataLayer.Enums;
 using DataLayer.Interfaces;
@@ -27,12 +27,12 @@ namespace BuisnessLayer.Jobs
             {
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    var orderChecker = scope.ServiceProvider.GetRequiredService<IOrderChecker>();
+                    var orderChecker = scope.ServiceProvider.GetRequiredService<IOrderService>();
                     var orderRepository = scope.ServiceProvider.GetRequiredService<IRepository<Order>>();
 
                     var now = DateTime.Now;
                     var orders = orderRepository.GetItems()
-                        .Where(x => x.DateBooking <= now)
+                        .Where(x => x.DateSend <= now)
                         .Where(x => x.Book.BookStatus == BookStatus.Booked)
                         .ToList();
 

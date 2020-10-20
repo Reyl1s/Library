@@ -15,5 +15,7 @@ namespace BusinessLayer.Interfaces
         public void DeleteOrder(long id);
 
         public void PassBook(long id);
+
+        public void CheckOrder(Order order);
     }
 }

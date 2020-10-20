@@ -10,7 +10,7 @@ namespace DataLayer
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             : base(options)
         {
-            //Database.Migrate();
+            Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
